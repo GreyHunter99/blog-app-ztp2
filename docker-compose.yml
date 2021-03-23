@@ -1,0 +1,42 @@
+version: '3'
+services:
+
+    apache:
+        build: .docker/apache
+        container_name: sf_apache
+        ports:
+          - 8000:80
+        volumes:
+          - .docker/config/vhosts:/etc/apache2/sites-enabled
+          - ./app:/home/wwwroot/sf
+        depends_on:
+          - php
+
+    mysql:
+        image: mysql
+        ports:
+          - 3307:3306
+        command: "--default-authentication-plugin=mysql_native_password"
+        container_name: sf_mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: sf
+            MYSQL_USER: sf
+            MYSQL_PASSWORD: sf
+
+    php:
+        build: .docker/php
+        container_name: sf_php
+        volumes:
+          - ./app:/home/wwwroot/sf
+        environment:
+          - maildev_host=sf_maildev
+        depends_on:
+          - maildev
+          - mysql
+
+    maildev:
+        image: djfarrelly/maildev
+        container_name: sf_maildev
+        ports:
+          - 8001:80
