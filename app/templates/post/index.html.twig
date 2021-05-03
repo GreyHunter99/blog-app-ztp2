@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ 'title_post_list'|trans }}
+{% endblock %}
+
+{% block body %}
+    <h1>{{ 'title_post_list'|trans }}</h1>
+    <p><a href=" {{ url('post_create') }}"
+          title="{{ 'action.new'|trans }}">{{ 'action.new'|trans }}</a>
+    </p>
+    {% if pagination is defined and pagination.items|length %}
+
+        <div class="navigation text-center">
+            {{ knp_pagination_render(pagination) }}
+        </div>
+
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>{{ knp_pagination_sortable(pagination, 'label_id'|trans, 'post.id') }}</th>
+                <th>{{ knp_pagination_sortable(pagination, 'label_created_at'|trans, 'post.createdAt') }}</th>
+                <th>{{ knp_pagination_sortable(pagination, 'label_updated_at'|trans, 'post.updatedAt') }}</th>
+                <th>{{ knp_pagination_sortable(pagination, 'label_title'|trans, 'post.title') }}</th>
+                <th>{{ 'label_category'|trans }}</th>
+                <th>{{ 'label.tags'|trans }}</th>
+                <th>{{ 'label_actions'|trans }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for post in pagination.items %}
+                <tr>
+                    <td>{{ post.id }}</td>
+                    <td>{{ post.createdAt|format_date('long') }}</td>
+                    <td>{{ post.updatedAt|format_date('long') }}</td>
+                    <td>{{ post.title }}</td>
+                    <td>{{ post.category.title }}</td>
+                    <td>
+                        {% for tag in post.tags %}
+                            {{ tag.title }}{% if not loop.last %},{% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>
+                        <a href="{{ url('post_show', {id: post.id}) }}" title="{{ 'action_view'|trans }}">
+                            {{ 'action_view'|trans }}
+                        </a>
+                        <a href="{{ url('post_edit', {id: post.id}) }}" title="{{ 'action_edit'|trans }}">
+                            {{ 'action_edit'|trans }}
+                        </a>
+                        <a href="{{ url('post_delete', {id: post.id}) }}" title="{{ 'action_delete'|trans }}">
+                            {{ 'action_delete'|trans }}
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="navigation text-center">
+            {{ knp_pagination_render(pagination) }}
+        </div>
+
+    {% else %}
+        <p>
+            {{ 'message_empty_list'|trans }}
+        </p>
+    {% endif %}
+{% endblock %}

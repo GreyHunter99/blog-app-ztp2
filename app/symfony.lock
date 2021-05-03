@@ -1,6 +1,15 @@
 {
+    "behat/transliterator": {
+        "version": "v1.3.0"
+    },
     "composer/package-versions-deprecated": {
         "version": "1.11.99.1"
+    },
+    "composer/semver": {
+        "version": "3.2.4"
+    },
+    "composer/xdebug-handler": {
+        "version": "1.4.5"
     },
     "doctrine/annotations": {
         "version": "1.0",
@@ -23,8 +32,14 @@
     "doctrine/common": {
         "version": "3.1.1"
     },
+    "doctrine/data-fixtures": {
+        "version": "1.5.0"
+    },
     "doctrine/dbal": {
         "version": "2.12.1"
+    },
+    "doctrine/deprecations": {
+        "version": "v0.5.3"
     },
     "doctrine/doctrine-bundle": {
         "version": "2.0",
@@ -39,6 +54,18 @@
             "config/packages/prod/doctrine.yaml",
             "src/Entity/.gitignore",
             "src/Repository/.gitignore"
+        ]
+    },
+    "doctrine/doctrine-fixtures-bundle": {
+        "version": "3.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "3.0",
+            "ref": "e5b542d4ef47d8a003c91beb35650c76907f7e53"
+        },
+        "files": [
+            "src/DataFixtures/AppFixtures.php"
         ]
     },
     "doctrine/doctrine-migrations-bundle": {
@@ -81,8 +108,35 @@
     "egulias/email-validator": {
         "version": "2.1.25"
     },
+    "escapestudios/symfony2-coding-standard": {
+        "version": "3.12.0"
+    },
+    "fakerphp/faker": {
+        "version": "v1.14.1"
+    },
+    "friendsofphp/php-cs-fixer": {
+        "version": "2.17",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "2.17",
+            "ref": "f0d4b4ddb4e2bb73b227e3987b6ecc53cd8be431"
+        },
+        "files": [
+            ".php_cs.dist"
+        ]
+    },
     "friendsofphp/proxy-manager-lts": {
         "version": "v1.0.3"
+    },
+    "gedmo/doctrine-extensions": {
+        "version": "v3.0.5"
+    },
+    "knplabs/knp-components": {
+        "version": "v3.0.2"
+    },
+    "knplabs/knp-paginator-bundle": {
+        "version": "v5.4.2"
     },
     "laminas/laminas-code": {
         "version": "4.0.0"
@@ -99,8 +153,14 @@
     "nikic/php-parser": {
         "version": "v4.10.4"
     },
+    "pdepend/pdepend": {
+        "version": "2.9.0"
+    },
     "php": {
         "version": "7.4"
+    },
+    "php-cs-fixer/diff": {
+        "version": "v1.3.1"
     },
     "phpdocumentor/reflection-common": {
         "version": "2.2.0"
@@ -110,6 +170,9 @@
     },
     "phpdocumentor/type-resolver": {
         "version": "1.4.0"
+    },
+    "phpmd/phpmd": {
+        "version": "2.9.1"
     },
     "psr/cache": {
         "version": "1.0.1"
@@ -133,6 +196,27 @@
         },
         "files": [
             "config/packages/sensio_framework_extra.yaml"
+        ]
+    },
+    "squizlabs/php_codesniffer": {
+        "version": "3.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "3.0",
+            "ref": "0dc9cceda799fd3a08b96987e176a261028a3709"
+        }
+    },
+    "stof/doctrine-extensions-bundle": {
+        "version": "1.2",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "1.2",
+            "ref": "6c1ceb662f8997085f739cd089bfbef67f245983"
+        },
+        "files": [
+            "config/packages/stof_doctrine_extensions.yaml"
         ]
     },
     "symfony/asset": {
@@ -495,10 +579,22 @@
             "config/routes/dev/web_profiler.yaml"
         ]
     },
+    "symfony/web-server-bundle": {
+        "version": "3.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "3.3",
+            "ref": "dae9b39fd6717970be7601101ce5aa960bf53d9a"
+        }
+    },
     "symfony/yaml": {
         "version": "v4.4.20"
     },
     "twig/extra-bundle": {
+        "version": "v3.3.0"
+    },
+    "twig/intl-extra": {
         "version": "v3.3.0"
     },
     "twig/twig": {

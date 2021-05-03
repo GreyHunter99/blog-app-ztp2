@@ -1,0 +1,11 @@
+{% include 'default/_form.html.twig' with {
+    page_title: 'title_post_delete',
+    page_title_param: {'%id%': post.id},
+    attr: {
+        method: 'DELETE',
+        action: url('post_delete', {'id': post.id}),
+    },
+    form: form,
+    submit_label: 'action_delete'|trans,
+    back_to_list_path: 'post_index',
+} %}

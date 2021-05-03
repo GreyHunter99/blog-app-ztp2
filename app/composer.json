@@ -10,8 +10,10 @@
         "doctrine/doctrine-bundle": "^2.2",
         "doctrine/doctrine-migrations-bundle": "^3.0",
         "doctrine/orm": "^2.8",
+        "knplabs/knp-paginator-bundle": "^5.4",
         "phpdocumentor/reflection-docblock": "^5.2",
-        "sensio/framework-extra-bundle": "^5.1",
+        "sensio/framework-extra-bundle": "^6.1",
+        "stof/doctrine-extensions-bundle": "^1.6",
         "symfony/asset": "4.4.*",
         "symfony/console": "4.4.*",
         "symfony/dotenv": "4.4.*",
@@ -35,17 +37,25 @@
         "symfony/web-link": "4.4.*",
         "symfony/yaml": "4.4.*",
         "twig/extra-bundle": "^2.12|^3.0",
+        "twig/intl-extra": "^3.3",
         "twig/twig": "^2.12|^3.0"
     },
     "require-dev": {
+        "doctrine/doctrine-fixtures-bundle": "^3.4",
+        "escapestudios/symfony2-coding-standard": "^3.12",
+        "fakerphp/faker": "^1.14",
+        "friendsofphp/php-cs-fixer": "^2.18",
+        "phpmd/phpmd": "^2.9",
+        "squizlabs/php_codesniffer": "^3.5",
         "symfony/browser-kit": "^4.4",
         "symfony/css-selector": "^4.4",
         "symfony/debug-bundle": "^4.4",
-        "symfony/maker-bundle": "^1.0",
+        "symfony/maker-bundle": "^1.30",
         "symfony/phpunit-bridge": "^5.2",
         "symfony/stopwatch": "^4.4",
         "symfony/var-dumper": "^4.4",
-        "symfony/web-profiler-bundle": "^4.4"
+        "symfony/web-profiler-bundle": "^4.4",
+        "symfony/web-server-bundle": "4.4.*"
     },
     "config": {
         "preferred-install": {
@@ -77,10 +87,16 @@
             "assets:install %PUBLIC_DIR%": "symfony-cmd"
         },
         "post-install-cmd": [
-            "@auto-scripts"
+            "@auto-scripts",
+            "@phpcs-scripts"
         ],
         "post-update-cmd": [
-            "@auto-scripts"
+            "@auto-scripts",
+            "@phpcs-scripts"
+        ],
+        "phpcs-scripts": [
+            "vendor/bin/phpcs --config-set installed_paths $(realpath vendor/escapestudios/symfony2-coding-standard)",
+            "vendor/bin/phpcs --config-set default_standard Symfony"
         ]
     },
     "conflict": {
@@ -88,7 +104,7 @@
     },
     "extra": {
         "symfony": {
-            "allow-contrib": false,
+            "allow-contrib": "true",
             "require": "4.4.*"
         }
     }

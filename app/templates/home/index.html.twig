@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Blog
+{% endblock %}
+
+{% block body %}
+    <p>
+        <a href=" {{ url('post_index') }}"
+          title="{{ 'title.post_list'|trans }}">{{ 'title.post_list'|trans }}</a>
+    </p>
+    <p>
+        <a href=" {{ url('category_index') }}"
+           title="{{ 'title.category_list'|trans }}">{{ 'title.category_list'|trans }}</a>
+    </p>
+    <p>
+        <a href=" {{ url('tag_index') }}"
+           title="{{ 'title.tag_list'|trans }}">{{ 'title.tag_list'|trans }}</a>
+    </p>
+{% endblock %}
