@@ -40,6 +40,47 @@
                 {{ 'action_back_to_list'|trans }}
             </a>
         </p>
+        <h2>{{ 'title_comment_list'|trans }}</h2>
+        <p>
+            <a href=" {{ url('comment_create', {id: post.id}) }}" title="{{ 'action.new'|trans }}">
+                {{ 'action.new'|trans }}
+            </a>
+        </p>
+        {% if pagination is defined and pagination.items|length %}
+            <div class="navigation text-center">
+                {{ knp_pagination_render(pagination) }}
+            </div>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>{{ knp_pagination_sortable(pagination, 'label_title'|trans, 'comment.title') }}</th>
+                    <th>{{ 'label.actions'|trans }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for comment in pagination.items %}
+                    <tr>
+                        <td>{{ comment.title }}</td>
+                        <td>
+                            <a href="{{ url('comment_edit', {id: comment.id}) }}" title="{{ 'action.edit'|trans }}">
+                                {{ 'action.edit'|trans }}
+                            </a>
+                            <a href="{{ url('comment_delete', {id: comment.id}) }}" title="{{ 'action.delete'|trans }}">
+                                {{ 'action.delete'|trans }}
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <div class="navigation text-center">
+                {{ knp_pagination_render(pagination) }}
+            </div>
+        {% else %}
+            <p>
+                {{ 'message_empty_list'|trans }}
+            </p>
+        {% endif %}
     {% else %}
         <p>
             {{ 'message_item_not_found'|trans }}

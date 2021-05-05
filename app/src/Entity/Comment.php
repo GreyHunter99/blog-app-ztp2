@@ -1,6 +1,6 @@
 <?php
 /**
- * Post entity.
+ * Comment entity.
  */
 
 namespace App\Entity;
@@ -14,14 +14,14 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Class Post.
+ * Class Comment.
  *
- * @ORM\Entity(repositoryClass="App\Repository\PostRepository")
- * @ORM\Table(name="posts")
+ * @ORM\Entity(repositoryClass="App\Repository\CommentRepository")
+ * @ORM\Table(name="comments")
  *
  * @UniqueEntity(fields={"title"})
  */
-class Post
+class Comment
 {
     /**
      * Primary key.
@@ -80,17 +80,17 @@ class Post
     private $title;
 
     /**
-     * Category.
+     * Post.
      *
-     * @var \App\Entity\Category Category
+     * @var \App\Entity\Post    Post
      *
      * @ORM\ManyToOne(
-     *     targetEntity="App\Entity\Category",
-     *     inversedBy="posts",
+     *     targetEntity="App\Entity\Post",
+     *     inversedBy="comments",
      * )
      * @ORM\JoinColumn(nullable=false)
      */
-    private $category;
+    private $post;
 
     /**
      * Code.
@@ -111,40 +111,6 @@ class Post
      * @Gedmo\Slug(fields={"title"})
      */
     private $code;
-
-    /**
-     * Tags.
-     *
-     * @var array
-     *
-     * @ORM\ManyToMany(
-     *     targetEntity="App\Entity\Tag",
-     *     inversedBy="posts",
-     * )
-     * @ORM\JoinTable(name="posts_tags")
-     */
-    private $tags;
-
-    /**
-     * Comments.
-     *
-     * @var \Doctrine\Common\Collections\ArrayCollection|\App\Entity\Comment[] $comments Comments
-     *
-     * @ORM\OneToMany(
-     *     targetEntity="App\Entity\Comment",
-     *     mappedBy="post",
-     * )
-     */
-    private $comments;
-
-    /**
-     * Post constructor.
-     */
-    public function __construct()
-    {
-        $this->tags = new ArrayCollection();
-        $this->comments = new ArrayCollection();
-    }
 
     /**
      * Getter for Id.
@@ -217,57 +183,23 @@ class Post
     }
 
     /**
-     * Getter for category.
+     * Getter for post.
      *
-     * @return \App\Entity\Category|null Category
+     * @return \App\Entity\Post|null Post
      */
-    public function getCategory(): ?Category
+    public function getPost(): ?Post
     {
-        return $this->category;
+        return $this->post;
     }
 
     /**
-     * Setter for category.
+     * Setter for post.
      *
-     * @param \App\Entity\Category|null $category Category
+     * @param \App\Entity\Post|null $post Post
      */
-    public function setCategory(?Category $category): void
+    public function setPost(?Post $post): void
     {
-        $this->category = $category;
-    }
-
-    /**
-     * Getter for tags.
-     *
-     * @return \Doctrine\Common\Collections\Collection|\App\Entity\Tag[] Tags collection
-     */
-    public function getTags(): Collection
-    {
-        return $this->tags;
-    }
-
-    /**
-     * Add tag to collection.
-     *
-     * @param \App\Entity\Tag $tag Tag entity
-     */
-    public function addTag(Tag $tag): void
-    {
-        if (!$this->tags->contains($tag)) {
-            $this->tags[] = $tag;
-        }
-    }
-
-    /**
-     * Remove tag from collection.
-     *
-     * @param \App\Entity\Tag $tag Tag entity
-     */
-    public function removeTag(Tag $tag): void
-    {
-        if ($this->tags->contains($tag)) {
-            $this->tags->removeElement($tag);
-        }
+        $this->post = $post;
     }
 
     /**
@@ -290,50 +222,6 @@ class Post
     public function setCode(string $code): self
     {
         $this->code = $code;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Comment[]
-     */
-    public function getComments(): Collection
-    {
-        return $this->comments;
-    }
-
-    /**
-     * Add comment to collection.
-     *
-     * @param \App\Entity\Comment $comment Comment entity
-     *
-     * @return $this
-     */
-    public function addComment(Comment $comment): self
-    {
-        if (!$this->comments->contains($comment)) {
-            $this->comments[] = $comment;
-            $comment->setPost($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Remove comment from collection.
-     *
-     * @param \App\Entity\Comment $comment Comment entity
-     *
-     * @return $this
-     */
-    public function removeComment(Comment $comment): self
-    {
-        if ($this->comments->removeElement($comment)) {
-            // set the owning side to null (unless already changed)
-            if ($comment->getPost() === $this) {
-                $comment->setPost(null);
-            }
-        }
 
         return $this;
     }

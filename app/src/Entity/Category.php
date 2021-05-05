@@ -111,6 +111,9 @@ class Category
      */
     private $code;
 
+    /**
+     * Category constructor.
+     */
     public function __construct()
     {
         $this->posts = new ArrayCollection();

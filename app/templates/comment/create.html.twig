@@ -1,0 +1,10 @@
+{% include 'default/_form.html.twig' with {
+    page_title: 'title_comment_create',
+    attr: {
+        method: 'POST',
+        action: url('comment_create', {'id': post.id})
+    },
+    form: form,
+    submit_label: 'action_create'|trans,
+    back_to_post: 'post_show',
+} %}

@@ -7,6 +7,7 @@ namespace App\Controller;
 
 use App\Entity\Post;
 use App\Form\PostType;
+use App\Repository\CommentRepository;
 use App\Repository\PostRepository;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -54,7 +55,10 @@ class PostController extends AbstractController
     /**
      * Show action.
      *
-     * @param \App\Entity\Post $post Post entity
+     * @param \App\Entity\Post                          $post               Post entity
+     * @param \Symfony\Component\HttpFoundation\Request $request            HTTP request
+     * @param \App\Repository\CommentRepository         $commentRepository  Comment repository
+     * @param \Knp\Component\Pager\PaginatorInterface   $paginator          Paginator
      *
      * @return \Symfony\Component\HttpFoundation\Response HTTP response
      *
@@ -65,11 +69,20 @@ class PostController extends AbstractController
      *     requirements={"id": "[1-9]\d*"},
      * )
      */
-    public function show(Post $post): Response
+    public function show(Post $post, Request $request, CommentRepository $commentRepository, PaginatorInterface $paginator): Response
     {
+        $pagination = $paginator->paginate(
+            $commentRepository->queryPostComments($post),
+            $request->query->getInt('page', 1),
+            CommentRepository::PAGINATOR_ITEMS_PER_PAGE
+        );
+
         return $this->render(
             'post/show.html.twig',
-            ['post' => $post]
+            [
+                'post' => $post,
+                'pagination' => $pagination,
+            ]
         );
     }
 
