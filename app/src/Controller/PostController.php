@@ -9,6 +9,8 @@ use App\Entity\Post;
 use App\Form\PostType;
 use App\Service\PostService;
 use App\Service\CommentService;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -26,22 +28,22 @@ class PostController extends AbstractController
     /**
      * Post service.
      *
-     * @var \App\Service\PostService
+     * @var PostService
      */
     private $postService;
 
     /**
      * Comment service.
      *
-     * @var \App\Service\CommentService
+     * @var CommentService
      */
     private $commentService;
 
     /**
      * PostController constructor.
      *
-     * @param \App\Service\PostService      $postService        Post service
-     * @param \App\Service\CommentService   $commentService     Comment service
+     * @param PostService    $postService    Post service
+     * @param CommentService $commentService Comment service
      */
     public function __construct(PostService $postService, CommentService $commentService)
     {
@@ -52,9 +54,9 @@ class PostController extends AbstractController
     /**
      * Index action.
      *
-     * @param \Symfony\Component\HttpFoundation\Request $request        HTTP request
+     * @param Request $request HTTP request
      *
-     * @return \Symfony\Component\HttpFoundation\Response HTTP response
+     * @return Response HTTP response
      *
      * @Route(
      *     "/",
@@ -82,10 +84,10 @@ class PostController extends AbstractController
     /**
      * Show action.
      *
-     * @param \App\Entity\Post                          $post               Post entity
-     * @param \Symfony\Component\HttpFoundation\Request $request            HTTP request
+     * @param Post    $post    Post entity
+     * @param Request $request HTTP request
      *
-     * @return \Symfony\Component\HttpFoundation\Response HTTP response
+     * @return Response HTTP response
      *
      * @Route(
      *     "/{id}",
@@ -111,12 +113,12 @@ class PostController extends AbstractController
     /**
      * Create action.
      *
-     * @param \Symfony\Component\HttpFoundation\Request $request        HTTP request
+     * @param Request $request HTTP request
      *
-     * @return \Symfony\Component\HttpFoundation\Response HTTP response
+     * @return Response HTTP response
      *
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws ORMException
+     * @throws OptimisticLockException
      *
      * @Route(
      *     "/create",
@@ -139,7 +141,7 @@ class PostController extends AbstractController
             $this->postService->save($post);
             $this->addFlash('success', 'message_created_successfully');
 
-            return $this->redirectToRoute('post_index');
+            return $this->redirectToRoute('post_show', ['id' => $post->getId()]);
         }
 
         return $this->render(
@@ -151,13 +153,13 @@ class PostController extends AbstractController
     /**
      * Edit action.
      *
-     * @param \Symfony\Component\HttpFoundation\Request $request        HTTP request
-     * @param \App\Entity\Post                          $post           Post entity
+     * @param Request $request HTTP request
+     * @param Post    $post    Post entity
      *
-     * @return \Symfony\Component\HttpFoundation\Response HTTP response
+     * @return Response HTTP response
      *
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws ORMException
+     * @throws OptimisticLockException
      *
      * @Route(
      *     "/{id}/edit",
@@ -180,7 +182,7 @@ class PostController extends AbstractController
             $this->postService->save($post);
             $this->addFlash('success', 'message_updated_successfully');
 
-            return $this->redirectToRoute('post_index');
+            return $this->redirectToRoute('post_show', ['id' => $post->getId()]);
         }
 
         return $this->render(
@@ -195,13 +197,13 @@ class PostController extends AbstractController
     /**
      * Delete action.
      *
-     * @param \Symfony\Component\HttpFoundation\Request $request        HTTP request
-     * @param \App\Entity\Post                          $post           Post entity
+     * @param Request $request HTTP request
+     * @param Post    $post    Post entity
      *
-     * @return \Symfony\Component\HttpFoundation\Response HTTP response
+     * @return Response HTTP response
      *
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws ORMException
+     * @throws OptimisticLockException
      *
      * @Route(
      *     "/{id}/delete",

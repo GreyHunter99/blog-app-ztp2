@@ -8,6 +8,8 @@ namespace App\Repository;
 use App\Entity\Comment;
 use App\Entity\Post;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\QueryBuilder;
 
@@ -35,7 +37,7 @@ class CommentRepository extends ServiceEntityRepository
     /**
      * CommentRepository constructor.
      *
-     * @param \Doctrine\Persistence\ManagerRegistry $registry Manager registry
+     * @param ManagerRegistry $registry Manager registry
      */
     public function __construct(ManagerRegistry $registry)
     {
@@ -45,10 +47,10 @@ class CommentRepository extends ServiceEntityRepository
     /**
      * Save record.
      *
-     * @param \App\Entity\Comment $comment Comment entity
+     * @param Comment $comment Comment entity
      *
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     public function save(Comment $comment): void
     {
@@ -59,10 +61,10 @@ class CommentRepository extends ServiceEntityRepository
     /**
      * Delete record.
      *
-     * @param \App\Entity\Comment $comment Comment entity
+     * @param Comment $comment Comment entity
      *
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     public function delete(Comment $comment): void
     {
@@ -73,7 +75,7 @@ class CommentRepository extends ServiceEntityRepository
     /**
      * Query all records.
      *
-     * @return \Doctrine\ORM\QueryBuilder Query builder
+     * @return QueryBuilder Query builder
      */
     public function queryAll(): QueryBuilder
     {
@@ -84,9 +86,9 @@ class CommentRepository extends ServiceEntityRepository
     /**
      * Query all comments for specific post.
      *
-     * @param \App\Entity\Post $post Post entity
+     * @param Post $post Post entity
      *
-     * @return \Doctrine\ORM\QueryBuilder Query builder
+     * @return QueryBuilder Query builder
      */
     public function queryPostComments(Post $post): QueryBuilder
     {
@@ -106,9 +108,9 @@ class CommentRepository extends ServiceEntityRepository
     /**
      * Get or create new query builder.
      *
-     * @param \Doctrine\ORM\QueryBuilder|null $queryBuilder Query builder
+     * @param QueryBuilder|null $queryBuilder Query builder
      *
-     * @return \Doctrine\ORM\QueryBuilder Query builder
+     * @return QueryBuilder Query builder
      */
     private function getOrCreateQueryBuilder(QueryBuilder $queryBuilder = null): QueryBuilder
     {

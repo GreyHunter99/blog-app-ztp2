@@ -22,13 +22,13 @@
             </dd>
             {% if is_granted('ROLE_ADMIN') %}
                 <dd>
-                    <a href="{{ url('tag_edit', {id: tag.id}) }}" title="{{ 'action.edit'|trans }}">
-                        {{ 'action.edit'|trans }}
+                    <a href="{{ url('tag_edit', {id: tag.id}) }}" title="{{ 'action_edit'|trans }}">
+                        {{ 'action_edit'|trans }}
                     </a>
                 </dd>
                 <dd>
-                    <a href="{{ url('tag_delete', {id: tag.id}) }}" title="{{ 'action.delete'|trans }}">
-                        {{ 'action.delete'|trans }}
+                    <a href="{{ url('tag_delete', {id: tag.id}) }}" title="{{ 'action_delete'|trans }}">
+                        {{ 'action_delete'|trans }}
                     </a>
                 </dd>
             {% endif %}

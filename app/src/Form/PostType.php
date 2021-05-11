@@ -23,14 +23,14 @@ class PostType extends AbstractType
     /**
      * Tags data transformer.
      *
-     * @var \App\Form\DataTransformer\TagsDataTransformer
+     * @var TagsDataTransformer
      */
     private $tagsDataTransformer;
 
     /**
      * PostType constructor.
      *
-     * @param \App\Form\DataTransformer\TagsDataTransformer $tagsDataTransformer Tags data transformer
+     * @param TagsDataTransformer $tagsDataTransformer Tags data transformer
      */
     public function __construct(TagsDataTransformer $tagsDataTransformer)
     {
@@ -45,8 +45,8 @@ class PostType extends AbstractType
      *
      * @see FormTypeExtensionInterface::buildForm()
      *
-     * @param \Symfony\Component\Form\FormBuilderInterface $builder The form builder
-     * @param array                                        $options The options
+     * @param FormBuilderInterface $builder The form builder
+     * @param array                $options The options
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -77,7 +77,6 @@ class PostType extends AbstractType
                     return $category->getName();
                 },
                 'label' => 'label_category',
-                'placeholder' => 'label_none',
                 'required' => true,
             ]
         );
@@ -99,7 +98,7 @@ class PostType extends AbstractType
     /**
      * Configures the options for this type.
      *
-     * @param \Symfony\Component\OptionsResolver\OptionsResolver $resolver The resolver for the options
+     * @param OptionsResolver $resolver The resolver for the options
      */
     public function configureOptions(OptionsResolver $resolver): void
     {

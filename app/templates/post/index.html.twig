@@ -7,7 +7,7 @@
 {% block body %}
     <h1>{{ 'title_post_list'|trans }}</h1>
     <p><a href=" {{ url('post_create') }}"
-          title="{{ 'action.new'|trans }}">{{ 'action.new'|trans }}</a>
+          title="{{ 'title_post_create'|trans }}">{{ 'title_post_create'|trans }}</a>
     </p>
     {% if pagination is defined and pagination.items|length %}
 
@@ -24,7 +24,7 @@
                 <th>{{ knp_pagination_sortable(pagination, 'label_title'|trans, 'post.title') }}</th>
                 <th>{{ knp_pagination_sortable(pagination, 'label_author'|trans, 'author.email') }}</th>
                 <th>{{ knp_pagination_sortable(pagination, 'label_category'|trans, 'category.name') }}</th>
-                <th>{{ 'label.tags'|trans }}</th>
+                <th>{{ 'label_tags'|trans }}</th>
                 <th>{{ 'label_actions'|trans }}</th>
             </tr>
             </thead>

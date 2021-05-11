@@ -1,18 +1,42 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    {{ 'title_user_details'|trans({'%id%': user.id|default('')}) }}
+    {{ 'title_user_profile'|trans({'%id%': user.id|default('')}) }}
 {% endblock %}
 
 {% block body %}
-    <h1>{{ 'title_user_details'|trans({'%id%': user.id|default('')}) }}</h1>
+    <h1>{{ 'title_user_profile'|trans({'%id%': user.id|default('')}) }}</h1>
     {% if user is defined and user|length %}
         <dl class="dl-horizontal">
             <dt>{{ 'label_id'|trans }}</dt>
             <dd>{{ user.id }}</dd>
             <dt>{{ 'label_email'|trans }}</dt>
             <dd>{{  user.email }}</dd>
+            <dt>{{ 'label_role'|trans }}</dt>
+            <dd>
+                {% if "ROLE_ADMIN" in user.roles %}
+                    Admin
+                {% else %}
+                    User
+                {% endif %}
+            </dd>
         </dl>
+        {% if is_granted('MANAGE', user) %}
+            <p><a href=" {{ url('user_changePassword', {id: user.id}) }}"
+                  title="{{ 'title_change_password'|trans }}">{{ 'title_change_password'|trans }}</a>
+            </p>
+        {% endif %}
+        {% if is_granted('ROLE_ADMIN') %}
+            {% if "ROLE_ADMIN" in user.roles %}
+                <p><a href=" {{ url('user_grantAdmin', {id: user.id}) }}"
+                      title="{{ 'title_revoke_admin'|trans }}">{{ 'title_revoke_admin'|trans }}</a>
+                </p>
+            {% else %}
+                <p><a href=" {{ url('user_grantAdmin', {id: user.id}) }}"
+                      title="{{ 'title_grant_admin'|trans }}">{{ 'title_grant_admin'|trans }}</a>
+                </p>
+            {% endif %}
+        {% endif %}
     {% else %}
         <p>
             {{ 'message_item_not_found'|trans }}

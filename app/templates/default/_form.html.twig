@@ -40,16 +40,22 @@ parameters:
             </a>
         </div>
     {% endif %}
+    {% if back_to_user|default(false) %}
+        <div class="form-group row float-sm-left">
+            <p><a href="{{ url(back_to_user, {id: user.id}) }}" class="btn btn-link">
+                    {{ 'action_back_to_user'|trans }}</a></p>
+        </div>
+    {% endif %}
     {% if back_to_post|default(false) %}
         <div class="form-group row float-sm-left">
             <p><a href="{{ url(back_to_post, {id: post.id}) }}" class="btn btn-link">
-                    {{ 'action.back_to_post'|trans }}</a></p>
+                    {{ 'action_back_to_post'|trans }}</a></p>
         </div>
     {% endif %}
     {% if back_to_post_with_comment|default(false) %}
         <div class="form-group row float-sm-left">
             <p><a href="{{ url(back_to_post_with_comment, {id: comment.post.id}) }}" class="btn btn-link">
-                    {{ 'action.back_to_post'|trans }}</a></p>
+                    {{ 'action_back_to_post'|trans }}</a></p>
         </div>
     {% endif %}
     {{ form_end(form) }}

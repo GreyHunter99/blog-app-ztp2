@@ -102,7 +102,7 @@ class Tag
     /**
      * Posts.
      *
-     * @var \Doctrine\Common\Collections\ArrayCollection|\App\Entity\Post[] Posts
+     * @var ArrayCollection|Post[] Posts
      *
      * @ORM\ManyToMany(
      *     targetEntity="App\Entity\Post",
@@ -132,7 +132,7 @@ class Tag
     /**
      * Getter for Created At.
      *
-     * @return \DateTimeInterface|null Created at
+     * @return DateTimeInterface|null Created at
      */
     public function getCreatedAt(): ?DateTimeInterface
     {
@@ -142,7 +142,7 @@ class Tag
     /**
      * Setter for Created at.
      *
-     * @param \DateTimeInterface $createdAt Created at
+     * @param DateTimeInterface $createdAt Created at
      */
     public function setCreatedAt(DateTimeInterface $createdAt): void
     {
@@ -152,7 +152,7 @@ class Tag
     /**
      * Getter for Updated at.
      *
-     * @return \DateTimeInterface|null Updated at
+     * @return DateTimeInterface|null Updated at
      */
     public function getUpdatedAt(): ?DateTimeInterface
     {
@@ -162,7 +162,7 @@ class Tag
     /**
      * Setter for Updated at.
      *
-     * @param \DateTimeInterface $updatedAt Updated at
+     * @param DateTimeInterface $updatedAt Updated at
      */
     public function setUpdatedAt(DateTimeInterface $updatedAt): void
     {
@@ -212,7 +212,7 @@ class Tag
     /**
      * Getter for posts.
      *
-     * @return \Doctrine\Common\Collections\Collection|\App\Entity\Post[] Posts collection
+     * @return Collection|Post[] Posts collection
      */
     public function getPosts(): Collection
     {
@@ -222,7 +222,7 @@ class Tag
     /**
      * Add post to collection.
      *
-     * @param \App\Entity\Post $post Post entity
+     * @param Post $post Post entity
      */
     public function addPost(Post $post): void
     {
@@ -235,7 +235,7 @@ class Tag
     /**
      * Remove post from collection.
      *
-     * @param \App\Entity\Post $post Post entity
+     * @param Post $post Post entity
      */
     public function removePost(Post $post): void
     {

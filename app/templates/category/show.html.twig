@@ -22,14 +22,14 @@
             </dd>
             {% if is_granted('ROLE_ADMIN') %}
                 <dd>
-                    <a href="{{ url('category_edit', {id: category.id}) }}" title="{{ 'action.edit'|trans }}">
-                        {{ 'action.edit'|trans }}
+                    <a href="{{ url('category_edit', {id: category.id}) }}" title="{{ 'action_edit'|trans }}">
+                        {{ 'action_edit'|trans }}
                     </a>
                 </dd>
                 {% if not category.posts|length %}
                     <dd>
-                        <a href="{{ url('category_delete', {id: category.id}) }}" title="{{ 'action.delete'|trans }}">
-                            {{ 'action.delete'|trans }}
+                        <a href="{{ url('category_delete', {id: category.id}) }}" title="{{ 'action_delete'|trans }}">
+                            {{ 'action_delete'|trans }}
                         </a>
                     </dd>
                 {% endif %}

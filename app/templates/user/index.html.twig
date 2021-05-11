@@ -17,6 +17,7 @@
             <tr>
                 <th>{{ knp_pagination_sortable(pagination, 'label_id'|trans, 'user.id') }}</th>
                 <th>{{ knp_pagination_sortable(pagination, 'label_email'|trans, 'user.email') }}</th>
+                <th>{{ knp_pagination_sortable(pagination, 'label_role'|trans, 'user.roles') }}</th>
                 <th>{{ 'label_actions'|trans }}</th>
             </tr>
             </thead>
@@ -25,6 +26,13 @@
                 <tr>
                     <td>{{ user.id }}</td>
                     <td>{{ user.email }}</td>
+                    <td>
+                        {% if "ROLE_ADMIN" in user.roles %}
+                            Admin
+                        {% else %}
+                            User
+                        {% endif %}
+                    </td>
                     <td>
                         <a href="{{ url('user_show', {id: user.id}) }}" title="{{ 'action_view'|trans }}">
                             {{ 'action_view'|trans }}

@@ -9,6 +9,8 @@ use App\Entity\Comment;
 use App\Entity\Post;
 use App\Form\CommentType;
 use App\Service\CommentService;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -26,14 +28,14 @@ class CommentController extends AbstractController
     /**
      * Comment service.
      *
-     * @var \App\Service\CommentService
+     * @var CommentService
      */
     private $commentService;
 
     /**
      * CommentController constructor.
      *
-     * @param \App\Service\CommentService   $commentService     Comment service
+     * @param CommentService $commentService Comment service
      */
     public function __construct(CommentService $commentService)
     {
@@ -43,13 +45,13 @@ class CommentController extends AbstractController
     /**
      * Create action.
      *
-     * @param \Symfony\Component\HttpFoundation\Request $request            HTTP request
-     * @param Post                                      $post
+     * @param Request $request HTTP request
+     * @param Post    $post    Post entity
      *
-     * @return \Symfony\Component\HttpFoundation\Response HTTP response
+     * @return Response HTTP response
      *
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws ORMException
+     * @throws OptimisticLockException
      *
      * @Route(
      *     "/{id}/create",
@@ -86,13 +88,13 @@ class CommentController extends AbstractController
     /**
      * Edit action.
      *
-     * @param \Symfony\Component\HttpFoundation\Request $request            HTTP request
-     * @param \App\Entity\Comment                       $comment            Comment entity
+     * @param Request $request HTTP request
+     * @param Comment $comment Comment entity
      *
-     * @return \Symfony\Component\HttpFoundation\Response HTTP response
+     * @return Response HTTP response
      *
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws ORMException
+     * @throws OptimisticLockException
      *
      * @Route(
      *     "/{id}/edit",
@@ -130,13 +132,13 @@ class CommentController extends AbstractController
     /**
      * Delete action.
      *
-     * @param \Symfony\Component\HttpFoundation\Request $request            HTTP request
-     * @param \App\Entity\Comment                       $comment            Comment entity
+     * @param Request $request HTTP request
+     * @param Comment $comment Comment entity
      *
-     * @return \Symfony\Component\HttpFoundation\Response HTTP response
+     * @return Response HTTP response
      *
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws ORMException
+     * @throws OptimisticLockException
      *
      * @Route(
      *     "/{id}/delete",

@@ -8,6 +8,8 @@ namespace App\Service;
 use App\Entity\Comment;
 use App\Entity\Post;
 use App\Repository\CommentRepository;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 
@@ -19,22 +21,22 @@ class CommentService
     /**
      * Comment repository.
      *
-     * @var \App\Repository\CommentRepository
+     * @var CommentRepository
      */
     private $commentRepository;
 
     /**
      * Paginator.
      *
-     * @var \Knp\Component\Pager\PaginatorInterface
+     * @var PaginatorInterface
      */
     private $paginator;
 
     /**
      * CommentService constructor.
      *
-     * @param \App\Repository\CommentRepository     $commentRepository      Comment repository
-     * @param \Knp\Component\Pager\PaginatorInterface $paginator          Paginator
+     * @param CommentRepository  $commentRepository Comment repository
+     * @param PaginatorInterface $paginator         Paginator
      */
     public function __construct(CommentRepository $commentRepository, PaginatorInterface $paginator)
     {
@@ -45,10 +47,10 @@ class CommentService
     /**
      * Create paginated list.
      *
-     * @param int $page Page number
-     * @param Post $post
+     * @param int  $page Page number
+     * @param Post $post Post entity
      *
-     * @return \Knp\Component\Pager\Pagination\PaginationInterface Paginated list
+     * @return PaginationInterface Paginated list
      */
     public function createPaginatedList(int $page, Post $post): PaginationInterface
     {
@@ -62,10 +64,10 @@ class CommentService
     /**
      * Save comment.
      *
-     * @param \App\Entity\Comment   $comment    Comment entity
+     * @param Comment $comment Comment entity
      *
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     public function save(Comment $comment): void
     {
@@ -75,10 +77,10 @@ class CommentService
     /**
      * Delete comment.
      *
-     * @param \App\Entity\Comment   $comment    Comment entity
+     * @param Comment $comment Comment entity
      *
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     public function delete(Comment $comment): void
     {

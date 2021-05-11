@@ -118,7 +118,7 @@ class Post
     /**
      * Category.
      *
-     * @var \App\Entity\Category Category
+     * @var Category Category
      *
      * @ORM\ManyToOne(
      *     targetEntity="App\Entity\Category",
@@ -148,7 +148,7 @@ class Post
     /**
      * Comments.
      *
-     * @var \Doctrine\Common\Collections\ArrayCollection|\App\Entity\Comment[] $comments Comments
+     * @var ArrayCollection|Comment[] $comments Comments
      *
      * @ORM\OneToMany(
      *     targetEntity="App\Entity\Comment",
@@ -160,7 +160,7 @@ class Post
     /**
      * Author.
      *
-     * @var \App\Entity\User
+     * @var User
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\User")
      * @ORM\JoinColumn(nullable=false)
@@ -189,7 +189,7 @@ class Post
     /**
      * Getter for Created At.
      *
-     * @return \DateTimeInterface|null Created at
+     * @return DateTimeInterface|null Created at
      */
     public function getCreatedAt(): ?DateTimeInterface
     {
@@ -199,7 +199,7 @@ class Post
     /**
      * Setter for Created at.
      *
-     * @param \DateTimeInterface $createdAt Created at
+     * @param DateTimeInterface $createdAt Created at
      */
     public function setCreatedAt(DateTimeInterface $createdAt): void
     {
@@ -209,7 +209,7 @@ class Post
     /**
      * Getter for Updated at.
      *
-     * @return \DateTimeInterface|null Updated at
+     * @return DateTimeInterface|null Updated at
      */
     public function getUpdatedAt(): ?DateTimeInterface
     {
@@ -219,7 +219,7 @@ class Post
     /**
      * Setter for Updated at.
      *
-     * @param \DateTimeInterface $updatedAt Updated at
+     * @param DateTimeInterface $updatedAt Updated at
      */
     public function setUpdatedAt(DateTimeInterface $updatedAt): void
     {
@@ -289,7 +289,7 @@ class Post
     /**
      * Getter for category.
      *
-     * @return \App\Entity\Category|null Category
+     * @return Category|null Category
      */
     public function getCategory(): ?Category
     {
@@ -299,7 +299,7 @@ class Post
     /**
      * Setter for category.
      *
-     * @param \App\Entity\Category|null $category Category
+     * @param Category|null $category Category
      */
     public function setCategory(?Category $category): void
     {
@@ -309,7 +309,7 @@ class Post
     /**
      * Getter for tags.
      *
-     * @return \Doctrine\Common\Collections\Collection|\App\Entity\Tag[] Tags collection
+     * @return Collection|Tag[] Tags collection
      */
     public function getTags(): Collection
     {
@@ -319,7 +319,7 @@ class Post
     /**
      * Add tag to collection.
      *
-     * @param \App\Entity\Tag $tag Tag entity
+     * @param Tag $tag Tag entity
      */
     public function addTag(Tag $tag): void
     {
@@ -331,7 +331,7 @@ class Post
     /**
      * Remove tag from collection.
      *
-     * @param \App\Entity\Tag $tag Tag entity
+     * @param Tag $tag Tag entity
      */
     public function removeTag(Tag $tag): void
     {
@@ -351,7 +351,7 @@ class Post
     /**
      * Add comment to collection.
      *
-     * @param \App\Entity\Comment $comment Comment entity
+     * @param Comment $comment Comment entity
      *
      * @return $this
      */
@@ -368,7 +368,7 @@ class Post
     /**
      * Remove comment from collection.
      *
-     * @param \App\Entity\Comment $comment Comment entity
+     * @param Comment $comment Comment entity
      *
      * @return $this
      */
@@ -387,7 +387,7 @@ class Post
     /**
      * Getter for author.
      *
-     * @return \App\Entity\User User
+     * @return User User
      */
     public function getAuthor(): ?User
     {
@@ -397,7 +397,7 @@ class Post
     /**
      * Setter for author.
      *
-     * @param \App\Entity\User $author User
+     * @param User $author User
      */
     public function setAuthor(?User $author): void
     {

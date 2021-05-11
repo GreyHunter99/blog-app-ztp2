@@ -7,6 +7,8 @@ namespace App\Service;
 
 use App\Entity\Post;
 use App\Repository\PostRepository;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 
@@ -18,38 +20,38 @@ class PostService
     /**
      * Post repository.
      *
-     * @var \App\Repository\PostRepository
+     * @var PostRepository
      */
     private $postRepository;
 
     /**
      * Paginator.
      *
-     * @var \Knp\Component\Pager\PaginatorInterface
+     * @var PaginatorInterface
      */
     private $paginator;
 
     /**
      * Category service.
      *
-     * @var \App\Service\CategoryService
+     * @var CategoryService
      */
     private $categoryService;
 
     /**
      * Tag service.
      *
-     * @var \App\Service\TagService
+     * @var TagService
      */
     private $tagService;
 
     /**
      * PostService constructor.
      *
-     * @param \App\Repository\PostRepository            $postRepository     Post repository
-     * @param \Knp\Component\Pager\PaginatorInterface   $paginator        Paginator
-     * @param \App\Service\CategoryService              $categoryService  Category service
-     * @param \App\Service\TagService                   $tagService       Tag service
+     * @param PostRepository     $postRepository  Post repository
+     * @param PaginatorInterface $paginator       Paginator
+     * @param CategoryService    $categoryService Category service
+     * @param TagService         $tagService      Tag service
      */
     public function __construct(PostRepository $postRepository, PaginatorInterface $paginator, CategoryService $categoryService, TagService $tagService)
     {
@@ -65,7 +67,7 @@ class PostService
      * @param int                                                 $page    Page number
      * @param array                                               $filters Filters array
      *
-     * @return \Knp\Component\Pager\Pagination\PaginationInterface Paginated list
+     * @return PaginationInterface Paginated list
      */
     public function createPaginatedList(int $page, array $filters = []): PaginationInterface
     {
@@ -81,10 +83,10 @@ class PostService
     /**
      * Save post.
      *
-     * @param \App\Entity\Post  $post   Post entity
+     * @param Post $post Post entity
      *
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     public function save(Post $post): void
     {
@@ -94,10 +96,10 @@ class PostService
     /**
      * Delete post.
      *
-     * @param \App\Entity\Post  $post   Post entity
+     * @param Post $post Post entity
      *
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     public function delete(Post $post): void
     {

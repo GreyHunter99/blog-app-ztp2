@@ -17,7 +17,7 @@ class PostFixtures extends AbstractBaseFixtures implements DependentFixtureInter
     /**
      * Load data.
      *
-     * @param \Doctrine\Persistence\ObjectManager $manager Persistence object manager
+     * @param ObjectManager $manager Persistence object manager
      */
     public function loadData(ObjectManager $manager): void
     {

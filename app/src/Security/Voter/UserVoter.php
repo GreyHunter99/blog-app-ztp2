@@ -1,19 +1,19 @@
 <?php
 /**
- * Comment security voter.
+ * User security voter.
  */
 namespace App\Security\Voter;
 
-use App\Entity\Comment;
+use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
- * Class CommentVoter.
+ * Class UserVoter.
  */
-class CommentVoter extends Voter
+class UserVoter extends Voter
 {
     /**
      * Security helper.
@@ -43,7 +43,7 @@ class CommentVoter extends Voter
     protected function supports($attribute, $subject)
     {
         return in_array($attribute, ['MANAGE'])
-            && $subject instanceof Comment;
+            && $subject instanceof User;
     }
 
     /**
@@ -71,7 +71,7 @@ class CommentVoter extends Voter
         // ... (check conditions and return true to grant permission) ...
         switch ($attribute) {
             case 'MANAGE':
-                if ($subject->getAuthor() === $user) {
+                if ($subject === $user) {
                     return true;
                 }
                 break;

@@ -11,22 +11,29 @@
 <body>
 <div class="container-fluid">
     {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-        <div>{{ app.user.username }}</div>
-        <div>
-            <a href="{{ url('app_logout') }}">{{ 'action_logout'|trans }}</a>
-        </div>
+        <p>Zalogowano jako: {{ app.user.username }}</p>
+        <p><a href=" {{ url('user_show', {id: app.user.id}) }}"
+              title="{{ 'title_my_profile'|trans }}">{{ 'title_my_profile'|trans }}</a>
+            <a href="{{ url('app_logout') }}"
+               title="{{ 'action_logout'|trans }}">{{ 'action_logout'|trans }}</a>
+        </p>
     {% else %}
-        <div>
-            <a href="{{ url('app_login') }}">{{ 'action_login'|trans }}</a>
-        </div>
+        <p>
+            <a href="{{ url('app_login') }}"
+               title="{{ 'title_login'|trans }}">{{ 'title_login'|trans }}</a>
+            <a href="{{ url('register') }}"
+               title="{{ 'title_registration'|trans }}">{{ 'title_registration'|trans }}</a>
+        </p>
     {% endif %}
-    <p><a href=" {{ url('home_index') }}"
-          title="{{ 'action.back_to_home'|trans }}">{{ 'action.back_to_home'|trans }}</a>
-    </p>
     {% if is_granted('ROLE_ADMIN') %}
         <p>
             <a href=" {{ url('user_index') }}"
-               title="{{ 'title.user_list'|trans }}">{{ 'title.user_list'|trans }}</a>
+               title="{{ 'title_user_list'|trans }}">{{ 'title_user_list'|trans }}</a>
+        </p>
+    {% endif %}
+    {% if (hide_user_nav is not defined) %}
+        <p><a href=" {{ url('home_index') }}"
+              title="{{ 'action_back_to_home'|trans }}">{{ 'action_back_to_home'|trans }}</a>
         </p>
     {% endif %}
     {% include 'default/_flash_messages.html.twig' %}

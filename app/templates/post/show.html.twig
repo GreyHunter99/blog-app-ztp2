@@ -28,7 +28,7 @@
                     {{ post.category.name }}
                 </a>
             </dd>
-            <dt>{{ 'label.tags'|trans }}</dt>
+            <dt>{{ 'label_tags'|trans }}</dt>
             <dd>
                 {% if post.tags is defined and post.tags|length %}
                     {% for tag in post.tags %}
@@ -43,13 +43,13 @@
             <dd>{{  post.content|markdown_to_html }}</dd>
             {% if is_granted('MANAGE', post) %}
                 <dd>
-                    <a href="{{ url('post_edit', {id: post.id}) }}" title="{{ 'action.edit'|trans }}">
-                        {{ 'action.edit'|trans }}
+                    <a href="{{ url('post_edit', {id: post.id}) }}" title="{{ 'action_edit'|trans }}">
+                        {{ 'action_edit'|trans }}
                     </a>
                 </dd>
                 <dd>
-                    <a href="{{ url('post_delete', {id: post.id}) }}" title="{{ 'action.delete'|trans }}">
-                        {{ 'action.delete'|trans }}
+                    <a href="{{ url('post_delete', {id: post.id}) }}" title="{{ 'action_delete'|trans }}">
+                        {{ 'action_delete'|trans }}
                     </a>
                 </dd>
             {% endif %}
@@ -61,8 +61,8 @@
         </p>
         <h2>{{ 'title_comment_list'|trans }}</h2>
         <p>
-            <a href=" {{ url('comment_create', {id: post.id}) }}" title="{{ 'action.new'|trans }}">
-                {{ 'action.new'|trans }}
+            <a href=" {{ url('comment_create', {id: post.id}) }}" title="{{ 'title_comment_create'|trans }}">
+                {{ 'title_comment_create'|trans }}
             </a>
         </p>
         {% if pagination is defined and pagination.items|length %}
@@ -77,8 +77,8 @@
                     <th>{{ knp_pagination_sortable(pagination, 'label_updated_at'|trans, 'comment.updatedAt') }}</th>
                     <th>{{ knp_pagination_sortable(pagination, 'label_title'|trans, 'comment.title') }}</th>
                     <th>{{ knp_pagination_sortable(pagination, 'label_author'|trans, 'author.email') }}</th>
-                    <th>{{ 'label.content'|trans }}</th>
-                    <th>{{ 'label.actions'|trans }}</th>
+                    <th>{{ 'label_content'|trans }}</th>
+                    <th>{{ 'label_actions'|trans }}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -96,11 +96,11 @@
                         <td>{{ comment.content|markdown_to_html }}</td>
                         <td>
                             {% if is_granted('MANAGE', comment) %}
-                                <a href="{{ url('comment_edit', {id: comment.id}) }}" title="{{ 'action.edit'|trans }}">
-                                    {{ 'action.edit'|trans }}
+                                <a href="{{ url('comment_edit', {id: comment.id}) }}" title="{{ 'action_edit'|trans }}">
+                                    {{ 'action_edit'|trans }}
                                 </a>
-                                <a href="{{ url('comment_delete', {id: comment.id}) }}" title="{{ 'action.delete'|trans }}">
-                                    {{ 'action.delete'|trans }}
+                                <a href="{{ url('comment_delete', {id: comment.id}) }}" title="{{ 'action_delete'|trans }}">
+                                    {{ 'action_delete'|trans }}
                                 </a>
                             {% endif %}
                         </td>

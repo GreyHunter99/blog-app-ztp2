@@ -6,12 +6,17 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Form\ChangePasswordType;
 use App\Service\UserService;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 /**
  * Class UserController.
@@ -23,14 +28,14 @@ class UserController extends AbstractController
     /**
      * User service.
      *
-     * @var \App\Service\UserService
+     * @var UserService
      */
     private $userService;
 
     /**
      * UserController constructor.
      *
-     * @param \App\Service\UserService  $userService    User service
+     * @param UserService $userService User service
      */
     public function __construct(UserService $userService)
     {
@@ -40,9 +45,9 @@ class UserController extends AbstractController
     /**
      * Index action.
      *
-     * @param \Symfony\Component\HttpFoundation\Request $request            HTTP request
+     * @param Request $request HTTP request
      *
-     * @return \Symfony\Component\HttpFoundation\Response HTTP response
+     * @return Response HTTP response
      *
      * @Route(
      *     "/",
@@ -68,9 +73,9 @@ class UserController extends AbstractController
     /**
      * Show action.
      *
-     * @param \App\Entity\User  $user   User entity
+     * @param User $user User entity
      *
-     * @return \Symfony\Component\HttpFoundation\Response HTTP response
+     * @return Response HTTP response
      *
      * @Route(
      *     "/{id}",
@@ -85,5 +90,117 @@ class UserController extends AbstractController
             'user/show.html.twig',
             ['user' => $user]
         );
+    }
+
+    /**
+     * Change password action.
+     *
+     * @param Request                      $request         HTTP request
+     * @param User                         $user            User entity
+     * @param UserPasswordEncoderInterface $passwordEncoder Password encoder
+     *
+     * @return Response HTTP response
+     *
+     * @throws ORMException
+     * @throws OptimisticLockException
+     *
+     * @Route(
+     *     "/{id}/changePassword",
+     *     methods={"GET", "PUT"},
+     *     requirements={"id": "[1-9]\d*"},
+     *     name="user_changePassword",
+     * )
+     *
+     * @IsGranted(
+     *     "MANAGE",
+     *     subject="user",
+     * )
+     */
+    public function changePassword(Request $request, User $user, UserPasswordEncoderInterface $passwordEncoder): Response
+    {
+        $form = $this->createForm(ChangePasswordType::class, $user, ['method' => 'PUT']);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $user->setPassword(
+                $passwordEncoder->encodePassword(
+                    $user,
+                    $user->getPassword()
+                )
+            );
+            $this->userService->save($user);
+
+            $this->addFlash('success', 'message.updated_successfully');
+
+            return $this->redirectToRoute('user_show', ['id' => $user->getId()]);
+        }
+
+        return $this->render(
+            'user/changePassword.html.twig',
+            [
+                'form' => $form->createView(),
+                'user' => $user,
+            ]
+        );
+    }
+
+    /**
+     * Grant admin action.
+     *
+     * @param Request $request HTTP request
+     * @param User    $user    User entity
+     *
+     * @return Response HTTP response
+     *
+     * @throws ORMException
+     * @throws OptimisticLockException
+     *
+     * @Route(
+     *     "/{id}/grantAdmin",
+     *     methods={"GET", "PUT"},
+     *     requirements={"id": "[1-9]\d*"},
+     *     name="user_grantAdmin",
+     * )
+     *
+     * @IsGranted(
+     *     "ROLE_ADMIN"
+     * )
+     */
+    public function grantAdmin(Request $request, User $user): Response
+    {
+        $form = $this->createForm(FormType::class, $user, ['method' => 'PUT']);
+        $form->handleRequest($request);
+        $roles = $user->getRoles();
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if (isset($roles[1])) {
+                $user->setRoles(['ROLE_USER']);
+            } else {
+                $user->setRoles(['ROLE_USER', 'ROLE_ADMIN']);
+            }
+            $this->userService->save($user);
+
+            $this->addFlash('success', 'message.updated_successfully');
+
+            return $this->redirectToRoute('user_show', ['id' => $user->getId()]);
+        }
+
+        if (isset($roles[1])) {
+            return $this->render(
+                'user/revokeAdmin.html.twig',
+                [
+                    'form' => $form->createView(),
+                    'user' => $user,
+                ]
+            );
+        } else {
+            return $this->render(
+                'user/grantAdmin.html.twig',
+                [
+                    'form' => $form->createView(),
+                    'user' => $user,
+                ]
+            );
+        }
     }
 }

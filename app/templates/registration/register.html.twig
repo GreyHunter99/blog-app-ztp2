@@ -1,0 +1,9 @@
+{% include 'default/_form.html.twig' with {
+    page_title: 'title_registration',
+    attr: {
+        method: 'POST',
+        action: url('register')
+    },
+    form: form,
+    submit_label: 'action_register'|trans,
+} %}

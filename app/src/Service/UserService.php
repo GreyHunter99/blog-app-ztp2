@@ -7,6 +7,8 @@ namespace App\Service;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 
@@ -18,22 +20,22 @@ class UserService
     /**
      * User repository.
      *
-     * @var \App\Repository\UserRepository
+     * @var UserRepository
      */
     private $userRepository;
 
     /**
      * Paginator.
      *
-     * @var \Knp\Component\Pager\PaginatorInterface
+     * @var PaginatorInterface
      */
     private $paginator;
 
     /**
      * UserService constructor.
      *
-     * @param \App\Repository\UserRepository        $userRepository     User repository
-     * @param \Knp\Component\Pager\PaginatorInterface $paginator          Paginator
+     * @param UserRepository     $userRepository User repository
+     * @param PaginatorInterface $paginator      Paginator
      */
     public function __construct(UserRepository $userRepository, PaginatorInterface $paginator)
     {
@@ -42,11 +44,24 @@ class UserService
     }
 
     /**
+     * Save user.
+     *
+     * @param User $user User entity
+     *
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function save(User $user): void
+    {
+        $this->userRepository->save($user);
+    }
+
+    /**
      * Create paginated list.
      *
      * @param int $page Page number
      *
-     * @return \Knp\Component\Pager\Pagination\PaginationInterface Paginated list
+     * @return PaginationInterface Paginated list
      */
     public function createPaginatedList(int $page): PaginationInterface
     {
