@@ -80,17 +80,20 @@ class Post
     private $title;
 
     /**
-     * Category.
+     * Content
      *
-     * @var \App\Entity\Category Category
+     * @var string
      *
-     * @ORM\ManyToOne(
-     *     targetEntity="App\Entity\Category",
-     *     inversedBy="posts",
+     * @ORM\Column(type="text")
+     *
+     * @Assert\Type(type="string")
+     * @Assert\NotBlank
+     * @Assert\Length(
+     *     min="3",
+     *     max="1000",
      * )
-     * @ORM\JoinColumn(nullable=false)
      */
-    private $category;
+    private $content;
 
     /**
      * Code.
@@ -113,6 +116,20 @@ class Post
     private $code;
 
     /**
+     * Category.
+     *
+     * @var \App\Entity\Category Category
+     *
+     * @ORM\ManyToOne(
+     *     targetEntity="App\Entity\Category",
+     *     inversedBy="posts",
+     *     fetch="EXTRA_LAZY",
+     * )
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $category;
+
+    /**
      * Tags.
      *
      * @var array
@@ -120,8 +137,11 @@ class Post
      * @ORM\ManyToMany(
      *     targetEntity="App\Entity\Tag",
      *     inversedBy="posts",
+     *     fetch="EXTRA_LAZY",
      * )
      * @ORM\JoinTable(name="posts_tags")
+     *
+     * @Assert\Type(type="Doctrine\Common\Collections\Collection")
      */
     private $tags;
 
@@ -136,6 +156,16 @@ class Post
      * )
      */
     private $comments;
+
+    /**
+     * Author.
+     *
+     * @var \App\Entity\User
+     *
+     * @ORM\ManyToOne(targetEntity="App\Entity\User")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $author;
 
     /**
      * Post constructor.
@@ -217,6 +247,46 @@ class Post
     }
 
     /**
+     * Getter for Content.
+     *
+     * @return string|null Content
+     */
+    public function getContent(): ?string
+    {
+        return $this->content;
+    }
+
+    /**
+     * Setter for Content.
+     *
+     * @param string $content Content
+     */
+    public function setContent(string $content): void
+    {
+        $this->content = $content;
+    }
+
+    /**
+     * Getter for Code.
+     *
+     * @return string|null Code
+     */
+    public function getCode(): ?string
+    {
+        return $this->code;
+    }
+
+    /**
+     * Setter for Code.
+     *
+     * @param string $code Code
+     */
+    public function setCode(string $code): void
+    {
+        $this->code = $code;
+    }
+
+    /**
      * Getter for category.
      *
      * @return \App\Entity\Category|null Category
@@ -271,30 +341,6 @@ class Post
     }
 
     /**
-     * Getter for Code.
-     *
-     * @return string|null Code
-     */
-    public function getCode(): ?string
-    {
-        return $this->code;
-    }
-
-    /**
-     * Setter for Code.
-     *
-     * @param string $code Code
-     *
-     * @return $this
-     */
-    public function setCode(string $code): self
-    {
-        $this->code = $code;
-
-        return $this;
-    }
-
-    /**
      * @return Collection|Comment[]
      */
     public function getComments(): Collection
@@ -336,5 +382,25 @@ class Post
         }
 
         return $this;
+    }
+
+    /**
+     * Getter for author.
+     *
+     * @return \App\Entity\User User
+     */
+    public function getAuthor(): ?User
+    {
+        return $this->author;
+    }
+
+    /**
+     * Setter for author.
+     *
+     * @param \App\Entity\User $author User
+     */
+    public function setAuthor(?User $author): void
+    {
+        $this->author = $author;
     }
 }

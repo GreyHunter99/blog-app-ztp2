@@ -14,19 +14,25 @@
             <dd>{{ category.createdAt|format_date('long') }}</dd>
             <dt>{{ 'label_updated_at'|trans }}</dt>
             <dd>{{ category.updatedAt|format_date('long') }}</dd>
-            <dt>{{ 'label_title'|trans }}</dt>
-            <dd>{{  category.title }}</dd>
+            <dt>{{ 'label_name'|trans }}</dt>
             <dd>
-                <a href="{{ url('category_edit', {id: category.id}) }}" title="{{ 'action.edit'|trans }}">
-                    {{ 'action.edit'|trans }}
+                <a href="{{ url('post_index', {'filters.category_id' : category.id}) }}" title="{{ category.name }}">
+                    {{ category.name }}
                 </a>
             </dd>
-            {% if not category.posts|length %}
+            {% if is_granted('ROLE_ADMIN') %}
                 <dd>
-                    <a href="{{ url('category_delete', {id: category.id}) }}" title="{{ 'action.delete'|trans }}">
-                        {{ 'action.delete'|trans }}
+                    <a href="{{ url('category_edit', {id: category.id}) }}" title="{{ 'action.edit'|trans }}">
+                        {{ 'action.edit'|trans }}
                     </a>
                 </dd>
+                {% if not category.posts|length %}
+                    <dd>
+                        <a href="{{ url('category_delete', {id: category.id}) }}" title="{{ 'action.delete'|trans }}">
+                            {{ 'action.delete'|trans }}
+                        </a>
+                    </dd>
+                {% endif %}
             {% endif %}
         </dl>
         <p>

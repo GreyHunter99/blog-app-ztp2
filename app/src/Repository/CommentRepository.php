@@ -91,6 +91,13 @@ class CommentRepository extends ServiceEntityRepository
     public function queryPostComments(Post $post): QueryBuilder
     {
         return $this->getOrCreateQueryBuilder()
+            ->select(
+                'partial comment.{id, createdAt, updatedAt, title, content}',
+                'partial post.{id, title}',
+                'author'
+            )
+            ->join('comment.post', 'post')
+            ->join('comment.author', 'author')
             ->where('comment.post = :post')
             ->setParameter('post', $post)
             ->orderBy('comment.updatedAt', 'DESC');

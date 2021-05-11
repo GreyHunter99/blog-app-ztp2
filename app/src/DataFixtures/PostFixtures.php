@@ -26,6 +26,7 @@ class PostFixtures extends AbstractBaseFixtures implements DependentFixtureInter
             $post->setTitle($this->faker->sentence);
             $post->setCreatedAt($this->faker->dateTimeBetween('-100 days', '-1 days'));
             $post->setUpdatedAt($this->faker->dateTimeBetween('-100 days', '-1 days'));
+            $post->setContent($this->faker->text);
             $post->setCategory($this->getRandomReference('categories'));
             $tags = $this->getRandomReferences(
                 'tags',
@@ -35,6 +36,9 @@ class PostFixtures extends AbstractBaseFixtures implements DependentFixtureInter
             foreach ($tags as $tag) {
                 $post->addTag($tag);
             }
+
+            $post->setAuthor($this->getRandomReference('users'));
+
             return $post;
         });
 
@@ -49,6 +53,6 @@ class PostFixtures extends AbstractBaseFixtures implements DependentFixtureInter
      */
     public function getDependencies(): array
     {
-        return [CategoryFixtures::class, TagFixtures::class];
+        return [CategoryFixtures::class, TagFixtures::class, UserFixtures::class];
     }
 }

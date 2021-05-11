@@ -7,6 +7,7 @@ namespace App\Form;
 
 use App\Entity\Comment;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -36,6 +37,15 @@ class CommentType extends AbstractType
                 'label' => 'label_title',
                 'required' => true,
                 'attr' => ['max_length' => 64],
+            ]
+        );
+        $builder->add(
+            'content',
+            TextareaType::class,
+            [
+                'label' => 'label_content',
+                'required' => true,
+                'attr' => ['max_length' => 500],
             ]
         );
     }

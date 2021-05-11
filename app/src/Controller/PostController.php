@@ -7,9 +7,9 @@ namespace App\Controller;
 
 use App\Entity\Post;
 use App\Form\PostType;
-use App\Repository\CommentRepository;
-use App\Repository\PostRepository;
-use Knp\Component\Pager\PaginatorInterface;
+use App\Service\PostService;
+use App\Service\CommentService;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,11 +24,35 @@ use Symfony\Component\Routing\Annotation\Route;
 class PostController extends AbstractController
 {
     /**
+     * Post service.
+     *
+     * @var \App\Service\PostService
+     */
+    private $postService;
+
+    /**
+     * Comment service.
+     *
+     * @var \App\Service\CommentService
+     */
+    private $commentService;
+
+    /**
+     * PostController constructor.
+     *
+     * @param \App\Service\PostService      $postService        Post service
+     * @param \App\Service\CommentService   $commentService     Comment service
+     */
+    public function __construct(PostService $postService, CommentService $commentService)
+    {
+        $this->postService = $postService;
+        $this->commentService = $commentService;
+    }
+
+    /**
      * Index action.
      *
      * @param \Symfony\Component\HttpFoundation\Request $request        HTTP request
-     * @param \App\Repository\PostRepository            $postRepository Post repository
-     * @param \Knp\Component\Pager\PaginatorInterface   $paginator      Paginator
      *
      * @return \Symfony\Component\HttpFoundation\Response HTTP response
      *
@@ -38,12 +62,15 @@ class PostController extends AbstractController
      *     name="post_index",
      * )
      */
-    public function index(Request $request, PostRepository $postRepository, PaginatorInterface $paginator): Response
+    public function index(Request $request): Response
     {
-        $pagination = $paginator->paginate(
-            $postRepository->queryAll(),
+        $filters = [];
+        $filters['category_id'] = $request->query->getInt('filters_category_id');
+        $filters['tag_id'] = $request->query->getInt('filters_tag_id');
+
+        $pagination = $this->postService->createPaginatedList(
             $request->query->getInt('page', 1),
-            PostRepository::PAGINATOR_ITEMS_PER_PAGE
+            $filters
         );
 
         return $this->render(
@@ -57,8 +84,6 @@ class PostController extends AbstractController
      *
      * @param \App\Entity\Post                          $post               Post entity
      * @param \Symfony\Component\HttpFoundation\Request $request            HTTP request
-     * @param \App\Repository\CommentRepository         $commentRepository  Comment repository
-     * @param \Knp\Component\Pager\PaginatorInterface   $paginator          Paginator
      *
      * @return \Symfony\Component\HttpFoundation\Response HTTP response
      *
@@ -69,13 +94,10 @@ class PostController extends AbstractController
      *     requirements={"id": "[1-9]\d*"},
      * )
      */
-    public function show(Post $post, Request $request, CommentRepository $commentRepository, PaginatorInterface $paginator): Response
+    public function show(Post $post, Request $request): Response
     {
-        $pagination = $paginator->paginate(
-            $commentRepository->queryPostComments($post),
-            $request->query->getInt('page', 1),
-            CommentRepository::PAGINATOR_ITEMS_PER_PAGE
-        );
+        $page = $request->query->getInt('page', 1);
+        $pagination = $this->commentService->createPaginatedList($page, $post);
 
         return $this->render(
             'post/show.html.twig',
@@ -90,7 +112,6 @@ class PostController extends AbstractController
      * Create action.
      *
      * @param \Symfony\Component\HttpFoundation\Request $request        HTTP request
-     * @param \App\Repository\PostRepository            $postRepository Post repository
      *
      * @return \Symfony\Component\HttpFoundation\Response HTTP response
      *
@@ -102,15 +123,20 @@ class PostController extends AbstractController
      *     methods={"GET", "POST"},
      *     name="post_create",
      * )
+     *
+     * @IsGranted(
+     *     "IS_AUTHENTICATED_REMEMBERED",
+     * )
      */
-    public function create(Request $request, PostRepository $postRepository): Response
+    public function create(Request $request): Response
     {
         $post = new Post();
         $form = $this->createForm(PostType::class, $post);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $postRepository->save($post);
+            $post->setAuthor($this->getUser());
+            $this->postService->save($post);
             $this->addFlash('success', 'message_created_successfully');
 
             return $this->redirectToRoute('post_index');
@@ -127,7 +153,6 @@ class PostController extends AbstractController
      *
      * @param \Symfony\Component\HttpFoundation\Request $request        HTTP request
      * @param \App\Entity\Post                          $post           Post entity
-     * @param \App\Repository\PostRepository            $postRepository Post repository
      *
      * @return \Symfony\Component\HttpFoundation\Response HTTP response
      *
@@ -140,14 +165,19 @@ class PostController extends AbstractController
      *     requirements={"id": "[1-9]\d*"},
      *     name="post_edit",
      * )
+     *
+     * @IsGranted(
+     *     "MANAGE",
+     *     subject="post",
+     * )
      */
-    public function edit(Request $request, Post $post, PostRepository $postRepository): Response
+    public function edit(Request $request, Post $post): Response
     {
         $form = $this->createForm(PostType::class, $post, ['method' => 'PUT']);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $postRepository->save($post);
+            $this->postService->save($post);
             $this->addFlash('success', 'message_updated_successfully');
 
             return $this->redirectToRoute('post_index');
@@ -167,7 +197,6 @@ class PostController extends AbstractController
      *
      * @param \Symfony\Component\HttpFoundation\Request $request        HTTP request
      * @param \App\Entity\Post                          $post           Post entity
-     * @param \App\Repository\PostRepository            $postRepository Post repository
      *
      * @return \Symfony\Component\HttpFoundation\Response HTTP response
      *
@@ -180,8 +209,13 @@ class PostController extends AbstractController
      *     requirements={"id": "[1-9]\d*"},
      *     name="post_delete",
      * )
+     *
+     * @IsGranted(
+     *     "MANAGE",
+     *     subject="post",
+     * )
      */
-    public function delete(Request $request, Post $post, PostRepository $postRepository): Response
+    public function delete(Request $request, Post $post): Response
     {
         $form = $this->createForm(FormType::class, $post, ['method' => 'DELETE']);
         $form->handleRequest($request);
@@ -191,7 +225,7 @@ class PostController extends AbstractController
         }
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $postRepository->delete($post);
+            $this->postService->delete($post);
             $this->addFlash('success', 'message_deleted_successfully');
 
             return $this->redirectToRoute('post_index');

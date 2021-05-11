@@ -21,7 +21,7 @@
                 <th>{{ knp_pagination_sortable(pagination, 'label_id'|trans, 'category.id') }}</th>
                 <th>{{ knp_pagination_sortable(pagination, 'label_created_at'|trans, 'category.createdAt') }}</th>
                 <th>{{ knp_pagination_sortable(pagination, 'label_updated_at'|trans, 'category.updatedAt') }}</th>
-                <th>{{ knp_pagination_sortable(pagination, 'label_title'|trans, 'category.title') }}</th>
+                <th>{{ knp_pagination_sortable(pagination, 'label_name'|trans, 'category.name') }}</th>
                 <th>{{ 'label_actions'|trans }}</th>
             </tr>
             </thead>
@@ -31,19 +31,25 @@
                     <td>{{ category.id }}</td>
                     <td>{{ category.createdAt|format_date('long') }}</td>
                     <td>{{ category.updatedAt|format_date('long') }}</td>
-                    <td>{{ category.title }}</td>
+                    <td>
+                        <a href="{{ url('post_index', {'filters.category_id' : category.id}) }}" title="{{ category.name }}">
+                            {{ category.name }}
+                        </a>
+                    </td>
                     <td>
                         <a href="{{ url('category_show', {id: category.id}) }}" title="{{ 'action_view'|trans }}">
                             {{ 'action_view'|trans }}
                         </a>
-                        <a href="{{ url('category_edit', {id: category.id}) }}" title="{{ 'action_edit'|trans }}">
-                            {{ 'action_edit'|trans }}
-                        </a>
-                    {% if not category.posts|length %}
-                        <a href="{{ url('category_delete', {id: category.id}) }}" title="{{ 'action_delete'|trans }}">
-                            {{ 'action_delete'|trans }}
-                        </a>
-                    {% endif %}
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <a href="{{ url('category_edit', {id: category.id}) }}" title="{{ 'action_edit'|trans }}">
+                                {{ 'action_edit'|trans }}
+                            </a>
+                            {% if not category.posts|length %}
+                                <a href="{{ url('category_delete', {id: category.id}) }}" title="{{ 'action_delete'|trans }}">
+                                    {{ 'action_delete'|trans }}
+                                </a>
+                            {% endif %}
+                        {% endif %}
                     </td>
                 </tr>
             {% endfor %}

@@ -22,7 +22,7 @@ class TagFixtures extends AbstractBaseFixtures
     {
         $this->createMany(10, 'tags', function ($i) {
             $tag = new Tag();
-            $tag->setTitle($this->faker->word);
+            $tag->setName($this->faker->word);
 
             return $tag;
         });

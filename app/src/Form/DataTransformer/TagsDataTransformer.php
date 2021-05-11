@@ -6,7 +6,7 @@
 namespace App\Form\DataTransformer;
 
 use App\Entity\Tag;
-use App\Repository\TagRepository;
+use App\Service\TagService;
 use Symfony\Component\Form\DataTransformerInterface;
 
 /**
@@ -15,20 +15,20 @@ use Symfony\Component\Form\DataTransformerInterface;
 class TagsDataTransformer implements DataTransformerInterface
 {
     /**
-     * Tag repository.
+     * Tag service.
      *
-     * @var \App\Repository\TagRepository
+     * @var \App\Service\TagService
      */
-    private $repository;
+    private $tagService;
 
     /**
      * TagsDataTransformer constructor.
      *
-     * @param \App\Repository\TagRepository $repository Tag repository
+     * @param \App\Service\TagService $tagService Tag service
      */
-    public function __construct(TagRepository $repository)
+    public function __construct(TagService $tagService)
     {
-        $this->repository = $repository;
+        $this->tagService = $tagService;
     }
 
     /**
@@ -47,7 +47,7 @@ class TagsDataTransformer implements DataTransformerInterface
         $tagNames = [];
 
         foreach ($tags as $tag) {
-            $tagNames[] = $tag->getTitle();
+            $tagNames[] = $tag->getName();
         }
 
         return implode(',', $tagNames);
@@ -65,17 +65,17 @@ class TagsDataTransformer implements DataTransformerInterface
      */
     public function reverseTransform($value): array
     {
-        $tagTitles = explode(',', $value);
+        $tagNames = explode(',', $value);
 
         $tags = [];
 
-        foreach ($tagTitles as $tagTitle) {
-            if ('' !== trim($tagTitle)) {
-                $tag = $this->repository->findOneByTitle(strtolower($tagTitle));
+        foreach ($tagNames as $tagName) {
+            if ('' !== trim($tagName)) {
+                $tag = $this->tagService->findOneByName(strtolower($tagName));
                 if (null == $tag) {
                     $tag = new Tag();
-                    $tag->setTitle($tagTitle);
-                    $this->repository->save($tag);
+                    $tag->setName($tagName);
+                    $this->tagService->save($tag);
                 }
                 $tags[] = $tag;
             }

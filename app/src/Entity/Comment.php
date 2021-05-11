@@ -80,17 +80,20 @@ class Comment
     private $title;
 
     /**
-     * Post.
+     * Content
      *
-     * @var \App\Entity\Post    Post
+     * @var string
      *
-     * @ORM\ManyToOne(
-     *     targetEntity="App\Entity\Post",
-     *     inversedBy="comments",
+     * @ORM\Column(type="text")
+     *
+     * @Assert\Type(type="string")
+     * @Assert\NotBlank
+     * @Assert\Length(
+     *     min="3",
+     *     max="500",
      * )
-     * @ORM\JoinColumn(nullable=false)
      */
-    private $post;
+    private $content;
 
     /**
      * Code.
@@ -111,6 +114,29 @@ class Comment
      * @Gedmo\Slug(fields={"title"})
      */
     private $code;
+
+    /**
+     * Post.
+     *
+     * @var \App\Entity\Post    Post
+     *
+     * @ORM\ManyToOne(
+     *     targetEntity="App\Entity\Post",
+     *     inversedBy="comments",
+     * )
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $post;
+
+    /**
+     * Author.
+     *
+     * @var \App\Entity\User
+     *
+     * @ORM\ManyToOne(targetEntity="App\Entity\User")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $author;
 
     /**
      * Getter for Id.
@@ -183,6 +209,46 @@ class Comment
     }
 
     /**
+     * Getter for Content.
+     *
+     * @return string|null Content
+     */
+    public function getContent(): ?string
+    {
+        return $this->content;
+    }
+
+    /**
+     * Setter for Content.
+     *
+     * @param string $content Content
+     */
+    public function setContent(string $content): void
+    {
+        $this->content = $content;
+    }
+
+    /**
+     * Getter for Code.
+     *
+     * @return string|null Code
+     */
+    public function getCode(): ?string
+    {
+        return $this->code;
+    }
+
+    /**
+     * Setter for Code.
+     *
+     * @param string $code Code
+     */
+    public function setCode(string $code): void
+    {
+        $this->code = $code;
+    }
+
+    /**
      * Getter for post.
      *
      * @return \App\Entity\Post|null Post
@@ -203,26 +269,22 @@ class Comment
     }
 
     /**
-     * Getter for Code.
+     * Getter for author.
      *
-     * @return string|null Code
+     * @return \App\Entity\User User
      */
-    public function getCode(): ?string
+    public function getAuthor(): ?User
     {
-        return $this->code;
+        return $this->author;
     }
 
     /**
-     * Setter for Code.
+     * Setter for author.
      *
-     * @param string $code Code
-     *
-     * @return $this
+     * @param \App\Entity\User $author User
      */
-    public function setCode(string $code): self
+    public function setAuthor(?User $author): void
     {
-        $this->code = $code;
-
-        return $this;
+        $this->author = $author;
     }
 }

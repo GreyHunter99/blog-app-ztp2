@@ -19,7 +19,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass="App\Repository\CategoryRepository")
  * @ORM\Table(name="categories")
  *
- * @UniqueEntity(fields={"title"})
+ * @UniqueEntity(fields={"name"})
  */
 class Category
 {
@@ -61,23 +61,43 @@ class Category
     private $updatedAt;
 
     /**
-     * Title.
+     * Name.
      *
      * @var string
      *
      * @ORM\Column(
      *     type="string",
-     *     length=64,
+     *     length=32,
      * )
      *
      * @Assert\Type(type="string")
      * @Assert\NotBlank
      * @Assert\Length(
      *     min="3",
-     *     max="64",
+     *     max="32",
      * )
      */
-    private $title;
+    private $name;
+
+    /**
+     * Code.
+     *
+     * @var string
+     *
+     * @ORM\Column(
+     *     type="string",
+     *     length=32,
+     * )
+     *
+     * @Assert\Type(type="string")
+     * @Assert\Length(
+     *     min="3",
+     *     max="32",
+     * )
+     *
+     * @Gedmo\Slug(fields={"name"})
+     */
+    private $code;
 
     /**
      * Posts.
@@ -90,26 +110,6 @@ class Category
      * )
      */
     private $posts;
-
-    /**
-     * Code.
-     *
-     * @var string
-     *
-     * @ORM\Column(
-     *     type="string",
-     *     length=64,
-     * )
-     *
-     * @Assert\Type(type="string")
-     * @Assert\Length(
-     *     min="3",
-     *     max="64",
-     * )
-     *
-     * @Gedmo\Slug(fields={"title"})
-     */
-    private $code;
 
     /**
      * Category constructor.
@@ -170,23 +170,43 @@ class Category
     }
 
     /**
-     * Getter for Title.
+     * Getter for Name.
      *
-     * @return string|null Title
+     * @return string|null Name
      */
-    public function getTitle(): ?string
+    public function getName(): ?string
     {
-        return $this->title;
+        return $this->name;
     }
 
     /**
-     * Setter for Title.
+     * Setter for Name.
      *
-     * @param string $title Title
+     * @param string $name Name
      */
-    public function setTitle(string $title): void
+    public function setName(string $name): void
     {
-        $this->title = $title;
+        $this->name = $name;
+    }
+
+    /**
+     * Getter for Code.
+     *
+     * @return string|null Code
+     */
+    public function getCode(): ?string
+    {
+        return $this->code;
+    }
+
+    /**
+     * Setter for Code.
+     *
+     * @param string $code Code
+     */
+    public function setCode(string $code): void
+    {
+        $this->code = $code;
     }
 
     /**
@@ -229,30 +249,6 @@ class Category
                 $post->setCategory(null);
             }
         }
-
-        return $this;
-    }
-
-    /**
-     * Getter for Code.
-     *
-     * @return string|null Code
-     */
-    public function getCode(): ?string
-    {
-        return $this->code;
-    }
-
-    /**
-     * Setter for Code.
-     *
-     * @param string $code Code
-     *
-     * @return $this
-     */
-    public function setCode(string $code): self
-    {
-        $this->code = $code;
 
         return $this;
     }

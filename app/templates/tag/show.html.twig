@@ -14,18 +14,24 @@
             <dd>{{ tag.createdAt|format_date('long') }}</dd>
             <dt>{{ 'label_updated_at'|trans }}</dt>
             <dd>{{ tag.updatedAt|format_date('long') }}</dd>
-            <dt>{{ 'label_title'|trans }}</dt>
-            <dd>{{  tag.title }}</dd>
+            <dt>{{ 'label_name'|trans }}</dt>
             <dd>
-                <a href="{{ url('tag_edit', {id: tag.id}) }}" title="{{ 'action.edit'|trans }}">
-                    {{ 'action.edit'|trans }}
+                <a href="{{ url('post_index', {'filters.tag_id' : tag.id}) }}" title="{{ tag.name }}">
+                    {{ tag.name }}
                 </a>
             </dd>
-            <dd>
-                <a href="{{ url('tag_delete', {id: tag.id}) }}" title="{{ 'action.delete'|trans }}">
-                    {{ 'action.delete'|trans }}
-                </a>
-            </dd>
+            {% if is_granted('ROLE_ADMIN') %}
+                <dd>
+                    <a href="{{ url('tag_edit', {id: tag.id}) }}" title="{{ 'action.edit'|trans }}">
+                        {{ 'action.edit'|trans }}
+                    </a>
+                </dd>
+                <dd>
+                    <a href="{{ url('tag_delete', {id: tag.id}) }}" title="{{ 'action.delete'|trans }}">
+                        {{ 'action.delete'|trans }}
+                    </a>
+                </dd>
+            {% endif %}
         </dl>
         <p>
             <a href="{{ url('tag_index') }}" title="{{ 'action_back_to_list'|trans }}">

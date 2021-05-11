@@ -8,7 +8,8 @@ namespace App\Controller;
 use App\Entity\Comment;
 use App\Entity\Post;
 use App\Form\CommentType;
-use App\Repository\CommentRepository;
+use App\Service\CommentService;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,11 +24,27 @@ use Symfony\Component\Routing\Annotation\Route;
 class CommentController extends AbstractController
 {
     /**
+     * Comment service.
+     *
+     * @var \App\Service\CommentService
+     */
+    private $commentService;
+
+    /**
+     * CommentController constructor.
+     *
+     * @param \App\Service\CommentService   $commentService     Comment service
+     */
+    public function __construct(CommentService $commentService)
+    {
+        $this->commentService = $commentService;
+    }
+
+    /**
      * Create action.
      *
      * @param \Symfony\Component\HttpFoundation\Request $request            HTTP request
      * @param Post                                      $post
-     * @param \App\Repository\CommentRepository         $commentRepository  Comment repository
      *
      * @return \Symfony\Component\HttpFoundation\Response HTTP response
      *
@@ -40,8 +57,12 @@ class CommentController extends AbstractController
      *     requirements={"id": "[1-9]\d*"},
      *     name="comment_create",
      * )
+     *
+     * @IsGranted(
+     *     "IS_AUTHENTICATED_REMEMBERED",
+     * )
      */
-    public function create(Request $request, Post $post, CommentRepository $commentRepository): Response
+    public function create(Request $request, Post $post): Response
     {
         $comment = new Comment();
         $form = $this->createForm(CommentType::class, $comment);
@@ -49,7 +70,8 @@ class CommentController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $comment->setPost($post);
-            $commentRepository->save($comment);
+            $comment->setAuthor($this->getUser());
+            $this->commentService->save($comment);
             $this->addFlash('success', 'message_created_successfully');
 
             return $this->redirectToRoute('post_show', ['id' => $post->getId()]);
@@ -66,7 +88,6 @@ class CommentController extends AbstractController
      *
      * @param \Symfony\Component\HttpFoundation\Request $request            HTTP request
      * @param \App\Entity\Comment                       $comment            Comment entity
-     * @param \App\Repository\CommentRepository         $commentRepository  Comment repository
      *
      * @return \Symfony\Component\HttpFoundation\Response HTTP response
      *
@@ -79,14 +100,19 @@ class CommentController extends AbstractController
      *     requirements={"id": "[1-9]\d*"},
      *     name="comment_edit",
      * )
+     *
+     * @IsGranted(
+     *     "MANAGE",
+     *     subject="comment",
+     * )
      */
-    public function edit(Request $request, Comment $comment, CommentRepository $commentRepository): Response
+    public function edit(Request $request, Comment $comment): Response
     {
         $form = $this->createForm(CommentType::class, $comment, ['method' => 'PUT']);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $commentRepository->save($comment);
+            $this->commentService->save($comment);
             $this->addFlash('success', 'message_updated_successfully');
 
             return $this->redirectToRoute('post_show', ['id' => $comment->getPost()->getId()]);
@@ -106,7 +132,6 @@ class CommentController extends AbstractController
      *
      * @param \Symfony\Component\HttpFoundation\Request $request            HTTP request
      * @param \App\Entity\Comment                       $comment            Comment entity
-     * @param \App\Repository\CommentRepository         $commentRepository  Comment repository
      *
      * @return \Symfony\Component\HttpFoundation\Response HTTP response
      *
@@ -119,8 +144,13 @@ class CommentController extends AbstractController
      *     requirements={"id": "[1-9]\d*"},
      *     name="comment_delete",
      * )
+     *
+     * @IsGranted(
+     *     "MANAGE",
+     *     subject="comment",
+     * )
      */
-    public function delete(Request $request, Comment $comment, CommentRepository $commentRepository): Response
+    public function delete(Request $request, Comment $comment): Response
     {
         $form = $this->createForm(FormType::class, $comment, ['method' => 'DELETE']);
         $form->handleRequest($request);
@@ -130,7 +160,7 @@ class CommentController extends AbstractController
         }
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $commentRepository->delete($comment);
+            $this->commentService->delete($comment);
             $this->addFlash('success', 'message_deleted_successfully');
 
             return $this->redirectToRoute('post_show', ['id' => $comment->getPost()->getId()]);

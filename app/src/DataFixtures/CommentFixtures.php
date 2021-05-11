@@ -26,7 +26,9 @@ class CommentFixtures extends AbstractBaseFixtures implements DependentFixtureIn
             $comment->setTitle($this->faker->sentence);
             $comment->setCreatedAt($this->faker->dateTimeBetween('-100 days', '-1 days'));
             $comment->setUpdatedAt($this->faker->dateTimeBetween('-100 days', '-1 days'));
+            $comment->setContent($this->faker->text);
             $comment->setPost($this->getRandomReference('posts'));
+            $comment->setAuthor($this->getRandomReference('users'));
 
             return $comment;
         });
@@ -42,6 +44,6 @@ class CommentFixtures extends AbstractBaseFixtures implements DependentFixtureIn
      */
     public function getDependencies(): array
     {
-        return [PostFixtures::class];
+        return [PostFixtures::class, UserFixtures::class];
     }
 }

@@ -19,7 +19,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass="App\Repository\TagRepository")
  * @ORM\Table(name="tags")
  *
- * @UniqueEntity(fields={"title"})
+ * @UniqueEntity(fields={"name"})
  */
 class Tag
 {
@@ -61,50 +61,53 @@ class Tag
     private $updatedAt;
 
     /**
-     * Code.
+     * Name.
      *
      * @var string
      *
      * @ORM\Column(
      *     type="string",
-     *     length=64,
-     * )
-     *
-     * @Assert\Type(type="string")
-     * @Assert\Length(
-     *     min="3",
-     *     max="64",
-     * )
-     *
-     * @Gedmo\Slug(fields={"title"})
-     */
-    private $code;
-
-    /**
-     * Title.
-     *
-     * @var string
-     *
-     * @ORM\Column(
-     *     type="string",
-     *     length=64,
+     *     length=32,
      * )
      *
      * @Assert\Type(type="string")
      * @Assert\NotBlank
      * @Assert\Length(
      *     min="3",
-     *     max="64",
+     *     max="32",
      * )
      */
-    private $title;
+    private $name;
+
+    /**
+     * Code.
+     *
+     * @var string
+     *
+     * @ORM\Column(
+     *     type="string",
+     *     length=32,
+     * )
+     *
+     * @Assert\Type(type="string")
+     * @Assert\Length(
+     *     min="3",
+     *     max="32",
+     * )
+     *
+     * @Gedmo\Slug(fields={"name"})
+     */
+    private $code;
 
     /**
      * Posts.
      *
      * @var \Doctrine\Common\Collections\ArrayCollection|\App\Entity\Post[] Posts
      *
-     * @ORM\ManyToMany(targetEntity="App\Entity\Post", mappedBy="tags")
+     * @ORM\ManyToMany(
+     *     targetEntity="App\Entity\Post",
+     *     mappedBy="tags",
+     * )
      */
     private $posts;
 
@@ -167,6 +170,26 @@ class Tag
     }
 
     /**
+     * Getter for Name.
+     *
+     * @return string|null Name
+     */
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    /**
+     * Setter for Name.
+     *
+     * @param string $name Name
+     */
+    public function setName(string $name): void
+    {
+        $this->name = $name;
+    }
+
+    /**
      * Getter for Code.
      *
      * @return string|null Code
@@ -184,26 +207,6 @@ class Tag
     public function setCode(string $code): void
     {
         $this->code = $code;
-    }
-
-    /**
-     * Getter for Title.
-     *
-     * @return string|null Title
-     */
-    public function getTitle(): ?string
-    {
-        return $this->title;
-    }
-
-    /**
-     * Setter for Title.
-     *
-     * @param string $title Title
-     */
-    public function setTitle(string $title): void
-    {
-        $this->title = $title;
     }
 
     /**
