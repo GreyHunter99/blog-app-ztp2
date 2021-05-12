@@ -59,6 +59,23 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     }
 
     /**
+     * Number of admins.
+     *
+     * @throws ORMException
+     *
+     * @return int Number of admins
+     */
+    public function numberOfAdmins(): int
+    {
+        return $this->getOrCreateQueryBuilder()
+            ->select('COUNT(user)')
+            ->where(':roles = LENGTH(user.roles)')
+            ->setParameter('roles', 27)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    /**
      * Get or create new query builder.
      *
      * @param QueryBuilder|null $queryBuilder Query builder

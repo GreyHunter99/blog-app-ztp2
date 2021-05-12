@@ -46,6 +46,12 @@ parameters:
                     {{ 'action_back_to_user'|trans }}</a></p>
         </div>
     {% endif %}
+    {% if back_to_user_with_data|default(false) %}
+        <div class="form-group row float-sm-left">
+            <p><a href="{{ url(back_to_user_with_data, {id: userData.user.id}) }}" class="btn btn-link">
+                    {{ 'action_back_to_user'|trans }}</a></p>
+        </div>
+    {% endif %}
     {% if back_to_post|default(false) %}
         <div class="form-group row float-sm-left">
             <p><a href="{{ url(back_to_post, {id: post.id}) }}" class="btn btn-link">

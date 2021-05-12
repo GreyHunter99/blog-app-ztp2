@@ -107,6 +107,7 @@ class Category
      * @ORM\OneToMany(
      *     targetEntity="App\Entity\Post",
      *     mappedBy="category",
+     *     fetch="EXTRA_LAZY",
      * )
      */
     private $posts;

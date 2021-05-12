@@ -225,9 +225,16 @@ class UserController extends AbstractController
      */
     public function grantAdmin(Request $request, User $user): Response
     {
+        $roles = $user->getRoles();
+
+        if (isset($roles[1]) && $this->userService->numberOfAdmins() == 1) {
+            $this->addFlash('danger', 'message_last_admin');
+
+            return $this->redirectToRoute('user_show', ['id' => $user->getId()]);
+        }
+
         $form = $this->createForm(FormType::class, $user, ['method' => 'PUT']);
         $form->handleRequest($request);
-        $roles = $user->getRoles();
 
         if ($form->isSubmitted() && $form->isValid()) {
             if (isset($roles[1])) {

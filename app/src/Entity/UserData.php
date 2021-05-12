@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Class UserData.
  *
- * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\UserDataRepository")
  * @ORM\Table(name="user_data")
  */
 class UserData
@@ -42,7 +42,6 @@ class UserData
      * )
      *
      * @Assert\Type(type="string")
-     * @Assert\NotBlank
      * @Assert\Length(
      *     min="3",
      *     max="64",
@@ -58,7 +57,6 @@ class UserData
      * @ORM\Column(type="text", nullable=true)
      *
      * @Assert\Type(type="string")
-     * @Assert\NotBlank
      * @Assert\Length(
      *     min="3",
      *     max="500",

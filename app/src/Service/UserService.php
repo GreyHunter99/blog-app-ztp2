@@ -71,4 +71,17 @@ class UserService
             UserRepository::PAGINATOR_ITEMS_PER_PAGE
         );
     }
+
+    /**
+     * Number of admins.
+     *
+     * @throws ORMException
+     * @throws OptimisticLockException
+     *
+     * @return int Number of admins
+     */
+    public function numberOfAdmins(): int
+    {
+        return $this->userRepository->numberOfAdmins();
+    }
 }

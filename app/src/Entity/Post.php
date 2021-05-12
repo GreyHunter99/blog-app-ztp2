@@ -123,7 +123,7 @@ class Post
      * @ORM\ManyToOne(
      *     targetEntity="App\Entity\Category",
      *     inversedBy="posts",
-     *     fetch="EXTRA_LAZY",
+     *     fetch="EAGER",
      * )
      * @ORM\JoinColumn(nullable=false)
      */
@@ -153,6 +153,7 @@ class Post
      * @ORM\OneToMany(
      *     targetEntity="App\Entity\Comment",
      *     mappedBy="post",
+     *     fetch="EXTRA_LAZY",
      * )
      */
     private $comments;

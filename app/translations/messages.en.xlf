@@ -102,6 +102,10 @@
                 <source>message_logout_successfully</source>
                 <target>Logout successfully.</target>
             </trans-unit>
+            <trans-unit id="message_last_admin">
+                <source>message_last_admin</source>
+                <target>Last admin.</target>
+            </trans-unit>
             <trans-unit id="title_my_profile">
                 <source>title_my_profile</source>
                 <target>My profile</target>

@@ -107,6 +107,7 @@ class Tag
      * @ORM\ManyToMany(
      *     targetEntity="App\Entity\Post",
      *     mappedBy="tags",
+     *     fetch="EXTRA_LAZY",
      * )
      */
     private $posts;
