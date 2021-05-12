@@ -13,7 +13,7 @@
             <dt>{{ 'label_email'|trans }}</dt>
             <dd>{{  user.email }}</dd>
             {% if user.userData.name is defined and user.userData.name|length %}
-                <dt>{{ 'label.name'|trans }}</dt>
+                <dt>{{ 'label_name'|trans }}</dt>
                 <dd>{{  user.userData.name }}</dd>
             {% endif %}
             <dt>{{ 'label_role'|trans }}</dt>
@@ -25,7 +25,7 @@
                 {% endif %}
             </dd>
             {% if user.userData.description is defined and user.userData.description|length %}
-                <dt>{{ 'label.description'|trans }}</dt>
+                <dt>{{ 'label_description'|trans }}</dt>
                 <dd>{{  user.userData.description }}</dd>
             {% endif %}
         </dl>

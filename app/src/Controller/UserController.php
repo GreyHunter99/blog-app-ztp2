@@ -9,7 +9,7 @@ use App\Entity\User;
 use App\Entity\UserData;
 use App\Form\ChangePasswordType;
 use App\Form\UserDataType;
-use App\Repository\UserDataRepository;
+use App\Service\UserDataService;
 use App\Service\UserService;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
@@ -36,13 +36,22 @@ class UserController extends AbstractController
     private $userService;
 
     /**
+     * User data service.
+     *
+     * @var UserDataService
+     */
+    private $userDataService;
+
+    /**
      * UserController constructor.
      *
-     * @param UserService $userService User service
+     * @param UserService     $userService     User service
+     * @param UserDataService $userDataService User data service
      */
-    public function __construct(UserService $userService)
+    public function __construct(UserService $userService, UserDataService $userDataService)
     {
         $this->userService = $userService;
+        $this->userDataService = $userDataService;
     }
 
     /**
@@ -150,9 +159,8 @@ class UserController extends AbstractController
     /**
      * Change data action.
      *
-     * @param Request            $request    HTTP request
-     * @param UserData           $userData   UserData entity
-     * @param UserDataRepository $repository UserData repository
+     * @param Request  $request  HTTP request
+     * @param UserData $userData UserData entity
      *
      * @return Response HTTP response
      *
@@ -171,13 +179,13 @@ class UserController extends AbstractController
      *     subject="userData",
      * )
      */
-    public function changeData(Request $request, UserData $userData, UserDataRepository $repository): Response
+    public function changeData(Request $request, UserData $userData): Response
     {
         $form = $this->createForm(UserDataType::class, $userData, ['method' => 'PUT']);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $repository->save($userData);
+            $this->userDataService->save($userData);
 
             $this->addFlash('success', 'message_updated_successfully');
 

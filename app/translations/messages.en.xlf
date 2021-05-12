@@ -58,6 +58,10 @@
                 <source>label_role</source>
                 <target>Role</target>
             </trans-unit>
+            <trans-unit id="label_description">
+                <source>label_description</source>
+                <target>Description</target>
+            </trans-unit>
             <trans-unit id="message_empty_list">
                 <source>message_empty_list</source>
                 <target>Empty list.</target>
@@ -193,6 +197,10 @@
             <trans-unit id="title_change_password">
                 <source>title_change_password</source>
                 <target>Change password</target>
+            </trans-unit>
+            <trans-unit id="title_change_data">
+                <source>title_change_data</source>
+                <target>Change data</target>
             </trans-unit>
             <trans-unit id="title_grant_admin">
                 <source>title_grant_admin</source>
