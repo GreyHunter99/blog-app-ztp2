@@ -12,6 +12,8 @@ use Symfony\Component\Security\Core\Validator\Constraints as SecurityAssert;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
+ * Class User.
+ *
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @ORM\Table(
  *     name="users",
@@ -93,7 +95,16 @@ class User implements UserInterface
     private $password;
 
     /**
-     * Getter for the Id.
+     * User data.
+     *
+     * @var UserData UserData
+     *
+     * @ORM\OneToOne(targetEntity=UserData::class, mappedBy="user", cascade={"persist", "remove"})
+     */
+    private $userData;
+
+    /**
+     * Getter for Id.
      *
      * @return int|null Result
      */
@@ -103,7 +114,7 @@ class User implements UserInterface
     }
 
     /**
-     * Getter for the E-mail.
+     * Getter for E-mail.
      *
      * @return string|null E-mail
      */
@@ -113,7 +124,7 @@ class User implements UserInterface
     }
 
     /**
-     * Setter for the E-mail.
+     * Setter for E-mail.
      *
      * @param string $email E-mail
      */
@@ -135,7 +146,7 @@ class User implements UserInterface
     }
 
     /**
-     * Getter for the Roles.
+     * Getter for Roles.
      *
      * @see UserInterface
      *
@@ -151,7 +162,7 @@ class User implements UserInterface
     }
 
     /**
-     * Setter for the Roles.
+     * Setter for Roles.
      *
      * @param array $roles Roles
      */
@@ -161,7 +172,7 @@ class User implements UserInterface
     }
 
     /**
-     * Getter for the Password.
+     * Getter for Password.
      *
      * @see UserInterface
      *
@@ -173,7 +184,7 @@ class User implements UserInterface
     }
 
     /**
-     * Setter for the Password.
+     * Setter for Password.
      *
      * @param string $password Password
      */
@@ -197,5 +208,30 @@ class User implements UserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    /**
+     * Getter for userData.
+     *
+     * @return UserData|null UserData
+     */
+    public function getUserData(): ?UserData
+    {
+        return $this->userData;
+    }
+
+    /**
+     * Setter for userData.
+     *
+     * @param UserData $userData UserData
+     */
+    public function setUserData(UserData $userData): void
+    {
+        // set the owning side of the relation if necessary
+        if ($userData->getUser() !== $this) {
+            $userData->setUser($this);
+        }
+
+        $this->userData = $userData;
     }
 }

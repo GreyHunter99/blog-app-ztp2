@@ -30,7 +30,6 @@ class SecurityController extends AbstractController
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
         if ($this->getUser()) {
-            //$this->addFlash('success', 'message_logged_successfully');
             return $this->redirectToRoute('home_index');
         }
 
@@ -58,8 +57,22 @@ class SecurityController extends AbstractController
      */
     public function logout()
     {
-        //$this->addFlash('success', 'message_logout_successfully');
-
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
+    }
+
+    /**
+     * Logout success action
+     *
+     * @return Response
+     *
+     * @Route(
+     *     "/logout_success",
+     *     name="app_logout_success"
+     * )
+     */
+    public function logoutSuccess(): Response
+    {
+        $this->addFlash('success', 'message_logout_successfully');
+        return $this->redirectToRoute('home_index');
     }
 }

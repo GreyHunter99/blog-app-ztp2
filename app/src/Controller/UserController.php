@@ -6,7 +6,10 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Entity\UserData;
 use App\Form\ChangePasswordType;
+use App\Form\UserDataType;
+use App\Repository\UserDataRepository;
 use App\Service\UserService;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
@@ -130,7 +133,7 @@ class UserController extends AbstractController
             );
             $this->userService->save($user);
 
-            $this->addFlash('success', 'message.updated_successfully');
+            $this->addFlash('success', 'message_updated_successfully');
 
             return $this->redirectToRoute('user_show', ['id' => $user->getId()]);
         }
@@ -140,6 +143,52 @@ class UserController extends AbstractController
             [
                 'form' => $form->createView(),
                 'user' => $user,
+            ]
+        );
+    }
+
+    /**
+     * Change data action.
+     *
+     * @param Request            $request    HTTP request
+     * @param UserData           $userData   UserData entity
+     * @param UserDataRepository $repository UserData repository
+     *
+     * @return Response HTTP response
+     *
+     * @throws ORMException
+     * @throws OptimisticLockException
+     *
+     * @Route(
+     *     "/{id}/changeData",
+     *     methods={"GET", "PUT"},
+     *     requirements={"id": "[1-9]\d*"},
+     *     name="user_changeData",
+     * )
+     *
+     * @IsGranted(
+     *     "MANAGE",
+     *     subject="userData",
+     * )
+     */
+    public function changeData(Request $request, UserData $userData, UserDataRepository $repository): Response
+    {
+        $form = $this->createForm(UserDataType::class, $userData, ['method' => 'PUT']);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $repository->save($userData);
+
+            $this->addFlash('success', 'message_updated_successfully');
+
+            return $this->redirectToRoute('user_show', ['id' => $userData->getUser()->getId()]);
+        }
+
+        return $this->render(
+            'user/changeData.html.twig',
+            [
+                'form' => $form->createView(),
+                'userData' => $userData,
             ]
         );
     }
@@ -180,7 +229,7 @@ class UserController extends AbstractController
             }
             $this->userService->save($user);
 
-            $this->addFlash('success', 'message.updated_successfully');
+            $this->addFlash('success', 'message_updated_successfully');
 
             return $this->redirectToRoute('user_show', ['id' => $user->getId()]);
         }

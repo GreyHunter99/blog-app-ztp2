@@ -1,0 +1,9 @@
+{% include 'default/_form.html.twig' with {
+    page_title: 'title_change_data',
+    page_title_param: {'%id%': userData.id},
+    attr: {
+        method: 'PUT',
+        action: url('user_changeData', {'id': userData.id}),
+    },
+    back_to_user: 'user_show',
+} %}

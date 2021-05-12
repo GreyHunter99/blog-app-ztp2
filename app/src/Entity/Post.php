@@ -287,7 +287,7 @@ class Post
     }
 
     /**
-     * Getter for category.
+     * Getter for Category.
      *
      * @return Category|null Category
      */
@@ -297,17 +297,17 @@ class Post
     }
 
     /**
-     * Setter for category.
+     * Setter for Category.
      *
-     * @param Category|null $category Category
+     * @param Category $category Category
      */
-    public function setCategory(?Category $category): void
+    public function setCategory(Category $category): void
     {
         $this->category = $category;
     }
 
     /**
-     * Getter for tags.
+     * Getter for Tags.
      *
      * @return Collection|Tag[] Tags collection
      */
@@ -341,6 +341,8 @@ class Post
     }
 
     /**
+     * Get comments.
+     *
      * @return Collection|Comment[]
      */
     public function getComments(): Collection
@@ -385,7 +387,7 @@ class Post
     }
 
     /**
-     * Getter for author.
+     * Getter for Author.
      *
      * @return User User
      */
@@ -395,7 +397,7 @@ class Post
     }
 
     /**
-     * Setter for author.
+     * Setter for Author.
      *
      * @param User $author User
      */

@@ -249,7 +249,7 @@ class Comment
     }
 
     /**
-     * Getter for post.
+     * Getter for Post.
      *
      * @return Post|null Post
      */
@@ -259,7 +259,7 @@ class Comment
     }
 
     /**
-     * Setter for post.
+     * Setter for Post.
      *
      * @param Post|null $post Post
      */
@@ -269,7 +269,7 @@ class Comment
     }
 
     /**
-     * Getter for author.
+     * Getter for Author.
      *
      * @return User User
      */
@@ -279,7 +279,7 @@ class Comment
     }
 
     /**
-     * Setter for author.
+     * Setter for Author.
      *
      * @param User $author User
      */

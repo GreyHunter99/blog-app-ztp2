@@ -11,7 +11,7 @@
 <body>
 <div class="container-fluid">
     {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-        <p>Zalogowano jako: {{ app.user.username }}</p>
+        <p>{{ 'title_logged_in_as'|trans }} {{ app.user.username }}</p>
         <p><a href=" {{ url('user_show', {id: app.user.id}) }}"
               title="{{ 'title_my_profile'|trans }}">{{ 'title_my_profile'|trans }}</a>
             <a href="{{ url('app_logout') }}"

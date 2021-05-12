@@ -1,23 +1,21 @@
 <?php
 /**
- * Registration type.
+ * UserData type.
  */
 
 namespace App\Form;
 
-use App\Entity\User;
 use App\Entity\UserData;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Class RegistrationType.
+ * Class UserDataType.
  */
-class RegistrationType extends AbstractType
+class UserDataType extends AbstractType
 {
     /**
      * Builds the form.
@@ -33,28 +31,22 @@ class RegistrationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add(
-            'email',
-            EmailType::class,
+            'name',
+            TextType::class,
             [
-                'label' => 'label_email',
-                'required' => true,
-                'attr' => ['max_length' => 180],
+                'label' => 'label_name',
+                'required' => false,
+                'attr' => ['max_length' => 64],
             ]
-        );
-        $builder->add(
-            'password',
-            RepeatedType::class, [
-                'type' => PasswordType::class,
-                'invalid_message' => 'Oba pola hasła muszą się zgadzać.',
-                'required' => true,
-                'first_options' => ['label' => 'label_password'],
-                'second_options' => ['label' => 'label_repeat_password'],
-            ]
-        );
-        $builder->add('userData', UserDataType::class, [
-                'data_class' => UserData::class,
-            ]
-        );
+        )
+            ->add(
+                'description',
+                TextareaType::class,
+                [
+                    'label' => 'label_description',
+                    'required' => false,
+                ]
+            );
     }
 
     /**
@@ -64,7 +56,7 @@ class RegistrationType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults(['data_class' => User::class]);
+        $resolver->setDefaults(['data_class' => UserData::class]);
     }
 
     /**
@@ -77,6 +69,6 @@ class RegistrationType extends AbstractType
      */
     public function getBlockPrefix(): string
     {
-        return 'user';
+        return 'user_data';
     }
 }

@@ -12,6 +12,10 @@
             <dd>{{ user.id }}</dd>
             <dt>{{ 'label_email'|trans }}</dt>
             <dd>{{  user.email }}</dd>
+            {% if user.userData.name is defined and user.userData.name|length %}
+                <dt>{{ 'label.name'|trans }}</dt>
+                <dd>{{  user.userData.name }}</dd>
+            {% endif %}
             <dt>{{ 'label_role'|trans }}</dt>
             <dd>
                 {% if "ROLE_ADMIN" in user.roles %}
@@ -20,7 +24,16 @@
                     User
                 {% endif %}
             </dd>
+            {% if user.userData.description is defined and user.userData.description|length %}
+                <dt>{{ 'label.description'|trans }}</dt>
+                <dd>{{  user.userData.description }}</dd>
+            {% endif %}
         </dl>
+        {% if is_granted('MANAGE', user) %}
+            <p><a href=" {{ url('user_changeData', {id: user.userData.id}) }}"
+                  title="{{ 'title_change_data'|trans }}">{{ 'title_change_data'|trans }}</a>
+            </p>
+        {% endif %}
         {% if is_granted('MANAGE', user) %}
             <p><a href=" {{ url('user_changePassword', {id: user.id}) }}"
                   title="{{ 'title_change_password'|trans }}">{{ 'title_change_password'|trans }}</a>

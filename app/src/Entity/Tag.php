@@ -210,7 +210,7 @@ class Tag
     }
 
     /**
-     * Getter for posts.
+     * Getter for Posts.
      *
      * @return Collection|Post[] Posts collection
      */
