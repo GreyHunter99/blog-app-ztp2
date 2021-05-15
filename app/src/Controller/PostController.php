@@ -116,6 +116,12 @@ class PostController extends AbstractController
      */
     public function show(Post $post, Request $request): Response
     {
+        if ($post->getAuthor()->getBlocked()) {
+            if(!$this->isGranted('ROLE_ADMIN')){
+                return $this->redirectToRoute('post_index');
+            }
+        }
+
         if (!$post->getPublished()) {
             if(!$this->isGranted('MANAGE', $post)){
                 return $this->redirectToRoute('post_index');

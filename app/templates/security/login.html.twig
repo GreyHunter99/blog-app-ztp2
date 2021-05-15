@@ -3,23 +3,23 @@
 {% block title %}{{ 'title_login'|trans }}{% endblock %}
 
 {% block body %}
-<form method="post">
-    {% if error %}
-        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-    {% endif %}
+    <form class="login-form" method="post">
+        {% if error %}
+            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+        {% endif %}
 
-    <h1 class="h3 mb-3 font-weight-normal">{{ 'title_login'|trans }}</h1>
-    <label for="inputEmail">{{ 'label_email'|trans }}</label>
-    <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" required autofocus>
-    <label for="inputPassword">{{ 'label_password'|trans }}</label>
-    <input type="password" name="password" id="inputPassword" class="form-control" required>
+        <h1 class="h3 mb-3 font-weight-normal">{{ 'title_login'|trans }}</h1>
+        <label for="inputEmail">{{ 'label_email'|trans }}</label>
+        <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" required autofocus>
+        <label for="inputPassword">{{ 'label_password'|trans }}</label>
+        <input type="password" name="password" id="inputPassword" class="form-control" required>
 
-    <input type="hidden" name="_csrf_token"
-           value="{{ csrf_token('authenticate') }}"
-    >
+        <input type="hidden" name="_csrf_token"
+               value="{{ csrf_token('authenticate') }}"
+        >
 
-    <button class="btn btn-lg btn-primary" type="submit">
-        {{ 'action_login'|trans }}
-    </button>
-</form>
+        <button class="btn btn-lg btn-primary" type="submit">
+            {{ 'action_login'|trans }}
+        </button>
+    </form>
 {% endblock %}

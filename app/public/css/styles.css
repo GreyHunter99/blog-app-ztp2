@@ -3,11 +3,16 @@ a:link {
 }
 
 .btn{
-    margin: 5px;
+    margin: 10px;
+}
+
+td .btn{
+    margin: 3px;
 }
 
 .container-fluid {
     text-align: center;
+    width: 90%;
 }
 
 .item-horizontal {
@@ -15,11 +20,16 @@ a:link {
     margin: 10px;
 }
 
-.navbar, nav{
+.navbar, nav {
     display: inline-block;
 }
 
-#search {
+form {
     display: inline-block;
-    width: 40%;
+    width: 50%;
+}
+
+.login-form {
+    margin-left: 7%;
+    margin-right: 7%;
 }
