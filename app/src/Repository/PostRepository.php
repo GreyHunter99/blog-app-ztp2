@@ -85,7 +85,7 @@ class PostRepository extends ServiceEntityRepository
     {
         $queryBuilder = $this->getOrCreateQueryBuilder()
             ->select(
-                'partial post.{id, createdAt, updatedAt, title}',
+                'partial post.{id, createdAt, updatedAt, title, published}',
                 'partial category.{id, name}',
                 'partial tags.{id, name}',
                 'author'
@@ -93,8 +93,26 @@ class PostRepository extends ServiceEntityRepository
             ->join('post.category', 'category')
             ->join('post.author', 'author')
             ->leftJoin('post.tags', 'tags')
+            ->andWhere('author.blocked IS NULL OR author.blocked = :blocked')
+            ->setParameter('blocked', '0')
             ->orderBy('post.updatedAt', 'DESC');
         $queryBuilder = $this->applyFiltersToList($queryBuilder, $filters);
+
+        return $queryBuilder;
+    }
+
+    /**
+     * Query published posts.
+     *
+     * @param array $filters Filters array
+     *
+     * @return QueryBuilder Query builder
+     */
+    public function queryPublished(array $filters = []): QueryBuilder
+    {
+        $queryBuilder = $this->queryAll($filters);
+        $queryBuilder->andWhere('post.published = :published')
+            ->setParameter('published', 1);
 
         return $queryBuilder;
     }
@@ -109,7 +127,35 @@ class PostRepository extends ServiceEntityRepository
      */
     public function queryByAuthor(User $user, array $filters = []): QueryBuilder
     {
-        $queryBuilder = $this->queryAll($filters);
+        $queryBuilder = $this->getOrCreateQueryBuilder()
+            ->select(
+                'partial post.{id, createdAt, updatedAt, title, published}',
+                'partial category.{id, name}',
+                'partial tags.{id, name}',
+                'author'
+            )
+            ->join('post.category', 'category')
+            ->join('post.author', 'author')
+            ->leftJoin('post.tags', 'tags')
+            ->andWhere('post.author = :author')
+            ->setParameter('author', $user)
+            ->orderBy('post.updatedAt', 'DESC');
+        $queryBuilder = $this->applyFiltersToList($queryBuilder, $filters);
+
+        return $queryBuilder;
+    }
+
+    /**
+     * Query published posts by author.
+     *
+     * @param User  $user    User entity
+     * @param array $filters Filters array
+     *
+     * @return QueryBuilder Query builder
+     */
+    public function queryPublishedByAuthor(User $user, array $filters = []): QueryBuilder
+    {
+        $queryBuilder = $this->queryPublished($filters);
         $queryBuilder->andWhere('post.author = :author')
             ->setParameter('author', $user);
 
@@ -146,6 +192,11 @@ class PostRepository extends ServiceEntityRepository
         if (isset($filters['tag']) && $filters['tag'] instanceof Tag) {
             $queryBuilder->andWhere('tags IN (:tag)')
                 ->setParameter('tag', $filters['tag']);
+        }
+
+        if (isset($filters['search'])) {
+            $queryBuilder->andWhere($queryBuilder->expr()->like(':search', 'post.title'))
+                ->setParameter('search', $filters['search']);
         }
 
         return $queryBuilder;

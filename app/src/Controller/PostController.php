@@ -14,6 +14,7 @@ use Doctrine\ORM\ORMException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\Extension\Core\Type\SearchType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -21,7 +22,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * Class PostController.
  *
- * @Route("/post")
+ * @Route("/")
  */
 class PostController extends AbstractController
 {
@@ -60,24 +61,41 @@ class PostController extends AbstractController
      *
      * @Route(
      *     "/",
-     *     methods={"GET"},
+     *     methods={"GET", "POST"},
      *     name="post_index",
      * )
      */
     public function index(Request $request): Response
     {
+        $form = $this->createForm(SearchType::class);
+        $form->handleRequest($request);
+
         $filters = [];
         $filters['category_id'] = $request->query->getInt('filters_category_id');
         $filters['tag_id'] = $request->query->getInt('filters_tag_id');
 
+        if ($form->isSubmitted() && $form->isValid()) {
+            $filters['search'] = $form->getData();
+        }
+
+        $mode = 'main';
+        if($this->isGranted('ROLE_ADMIN')){
+            $mode = 'main_admin';
+        }
+
         $pagination = $this->postService->createPaginatedList(
             $request->query->getInt('page', 1),
+            $mode,
+            null,
             $filters
         );
 
         return $this->render(
             'post/index.html.twig',
-            ['pagination' => $pagination]
+            [
+                'pagination' => $pagination,
+                'form' => $form->createView()
+            ]
         );
     }
 
@@ -98,8 +116,14 @@ class PostController extends AbstractController
      */
     public function show(Post $post, Request $request): Response
     {
+        if (!$post->getPublished()) {
+            if(!$this->isGranted('MANAGE', $post)){
+                return $this->redirectToRoute('post_index');
+            }
+        }
+
         $page = $request->query->getInt('page', 1);
-        $pagination = $this->commentService->createPaginatedList($page, $post);
+        $pagination = $this->commentService->createPaginatedList($page, $post, null);
 
         return $this->render(
             'post/show.html.twig',

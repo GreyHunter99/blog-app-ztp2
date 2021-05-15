@@ -7,6 +7,7 @@ namespace App\Service;
 
 use App\Entity\Comment;
 use App\Entity\Post;
+use App\Entity\User;
 use App\Repository\CommentRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
@@ -47,15 +48,24 @@ class CommentService
     /**
      * Create paginated list.
      *
-     * @param int  $page Page number
-     * @param Post $post Post entity
+     * @param int       $page Page number
+     * @param Post|null $post Post entity
+     * @param User|null $user User entity
      *
      * @return PaginationInterface Paginated list
      */
-    public function createPaginatedList(int $page, Post $post): PaginationInterface
+    public function createPaginatedList(int $page, ?Post $post, ?User $user): PaginationInterface
     {
+        if ($post) {
+            return $this->paginator->paginate(
+                $this->commentRepository->queryPostComments($post),
+                $page,
+                CommentRepository::PAGINATOR_ITEMS_PER_PAGE
+            );
+        }
+
         return $this->paginator->paginate(
-            $this->commentRepository->queryPostComments($post),
+            $this->commentRepository->queryByAuthor($user),
             $page,
             CommentRepository::PAGINATOR_ITEMS_PER_PAGE
         );

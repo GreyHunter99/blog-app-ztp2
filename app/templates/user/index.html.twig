@@ -7,17 +7,16 @@
 {% block body %}
     <h1>{{ 'title_user_list'|trans }}</h1>
     {% if pagination is defined and pagination.items|length %}
-
         <div class="navigation text-center">
             {{ knp_pagination_render(pagination) }}
         </div>
-
         <table class="table table-striped">
             <thead>
             <tr>
                 <th>{{ knp_pagination_sortable(pagination, 'label_id'|trans, 'user.id') }}</th>
                 <th>{{ knp_pagination_sortable(pagination, 'label_email'|trans, 'user.email') }}</th>
                 <th>{{ knp_pagination_sortable(pagination, 'label_role'|trans, 'user.roles') }}</th>
+                <th>{{ knp_pagination_sortable(pagination, 'label_blocked'|trans, 'user.blocked') }}</th>
                 <th>{{ 'label_actions'|trans }}</th>
             </tr>
             </thead>
@@ -28,13 +27,20 @@
                     <td>{{ user.email }}</td>
                     <td>
                         {% if "ROLE_ADMIN" in user.roles %}
-                            Admin
+                            {{ 'item_admin'|trans }}
                         {% else %}
-                            User
+                            {{ 'item_user'|trans }}
                         {% endif %}
                     </td>
                     <td>
-                        <a href="{{ url('user_show', {id: user.id}) }}" title="{{ 'action_view'|trans }}">
+                        {% if user.blocked %}
+                            {{ 'item_blocked'|trans }}
+                        {% else %}
+                            {{ 'item_unblocked'|trans }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a class="btn btn-primary" role="button" href="{{ url('user_show', {id: user.id}) }}" title="{{ 'action_view'|trans }}">
                             {{ 'action_view'|trans }}
                         </a>
                     </td>
@@ -42,11 +48,9 @@
             {% endfor %}
             </tbody>
         </table>
-
         <div class="navigation text-center">
             {{ knp_pagination_render(pagination) }}
         </div>
-
     {% else %}
         <p>
             {{ 'message_empty_list'|trans }}

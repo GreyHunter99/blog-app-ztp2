@@ -7,11 +7,9 @@
 {% block body %}
     <h1>{{ 'title_tag_list'|trans }}</h1>
     {% if pagination is defined and pagination.items|length %}
-
         <div class="navigation text-center">
             {{ knp_pagination_render(pagination) }}
         </div>
-
         <table class="table table-striped">
             <thead>
             <tr>
@@ -34,27 +32,25 @@
                         </a>
                     </td>
                     <td>
-                        <a href="{{ url('tag_show', {id: tag.id}) }}" title="{{ 'action_view'|trans }}">
+                        <a class="btn btn-primary" role="button" href="{{ url('tag_show', {id: tag.id}) }}" title="{{ 'action_view'|trans }}">
                             {{ 'action_view'|trans }}
                         </a>
                         {% if is_granted('ROLE_ADMIN') %}
-                            <a href="{{ url('tag_edit', {id: tag.id}) }}" title="{{ 'action_edit'|trans }}">
-                                {{ 'action_edit'|trans }}
-                            </a>
-                            <a href="{{ url('tag_delete', {id: tag.id}) }}" title="{{ 'action_delete'|trans }}">
-                                {{ 'action_delete'|trans }}
-                            </a>
+                        <a class="btn btn-primary" role="button" href="{{ url('tag_edit', {id: tag.id}) }}" title="{{ 'action_edit'|trans }}">
+                            {{ 'action_edit'|trans }}
+                        </a>
+                        <a class="btn btn-primary" role="button" href="{{ url('tag_delete', {id: tag.id}) }}" title="{{ 'action_delete'|trans }}">
+                            {{ 'action_delete'|trans }}
+                        </a>
                         {% endif %}
                     </td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
-
         <div class="navigation text-center">
             {{ knp_pagination_render(pagination) }}
         </div>
-
     {% else %}
         <p>
             {{ 'message_empty_list'|trans }}

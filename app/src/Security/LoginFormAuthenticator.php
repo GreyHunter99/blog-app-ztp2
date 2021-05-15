@@ -132,7 +132,12 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
 
         if (!$user) {
             // fail authentication with a custom error
-            throw new CustomUserMessageAuthenticationException('Email could not be found.');
+            throw new CustomUserMessageAuthenticationException('Username could not be found.');
+        }
+
+        if ($user->getBlocked()) {
+            // fail authentication with a custom error
+            throw new CustomUserMessageAuthenticationException('Account is locked.');
         }
 
         return $user;
@@ -182,7 +187,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
             return new RedirectResponse($targetPath);
         }
 
-        return new RedirectResponse($this->urlGenerator->generate('home_index'));
+        return new RedirectResponse($this->urlGenerator->generate('post_index'));
     }
 
     /**

@@ -8,45 +8,202 @@
     <h1>{{ 'title_user_profile'|trans({'%id%': user.id|default('')}) }}</h1>
     {% if user is defined and user|length %}
         <dl class="dl-horizontal">
-            <dt>{{ 'label_id'|trans }}</dt>
-            <dd>{{ user.id }}</dd>
+            <div class="item-horizontal">
+                <dt>{{ 'label_id'|trans }}</dt>
+                <dd>{{ user.id }}</dd>
+            </div>
+            <div class="item-horizontal">
             <dt>{{ 'label_email'|trans }}</dt>
             <dd>{{  user.email }}</dd>
+            </div>
+            <div class="item-horizontal">
             {% if user.userData.name is defined and user.userData.name|length %}
                 <dt>{{ 'label_name'|trans }}</dt>
                 <dd>{{  user.userData.name }}</dd>
             {% endif %}
+            </div>
+            <div class="item-horizontal">
             <dt>{{ 'label_role'|trans }}</dt>
             <dd>
                 {% if "ROLE_ADMIN" in user.roles %}
-                    Admin
+                    {{ 'item_admin'|trans }}
                 {% else %}
-                    User
+                    {{ 'item_user'|trans }}
                 {% endif %}
             </dd>
+            </div>
+            {% if is_granted('ROLE_ADMIN') %}
+                <div class="item-horizontal">
+                    <dt>{{ 'label_blocked'|trans }}</dt>
+                    {% if user.blocked %}
+                        <dd>
+                            {{ 'item_blocked'|trans }}
+                        </dd>
+                    {% else %}
+                        <dd>
+                            {{ 'item_unblocked'|trans }}
+                        </dd>
+                    {% endif %}
+                </div>
+            {% endif %}
             {% if user.userData.description is defined and user.userData.description|length %}
                 <dt>{{ 'label_description'|trans }}</dt>
                 <dd>{{  user.userData.description }}</dd>
             {% endif %}
         </dl>
         {% if is_granted('MANAGE', user) %}
-            <p><a href=" {{ url('user_changeData', {id: user.userData.id}) }}"
-                  title="{{ 'title_change_data'|trans }}">{{ 'title_change_data'|trans }}</a>
-            </p>
+            <a class="btn btn-primary" role="button" href=" {{ url('user_changeData', {id: user.userData.id}) }}"
+               title="{{ 'title_change_data'|trans }}">{{ 'title_change_data'|trans }}</a>
         {% endif %}
         {% if is_granted('MANAGE', user) %}
-            <p><a href=" {{ url('user_changePassword', {id: user.id}) }}"
-                  title="{{ 'title_change_password'|trans }}">{{ 'title_change_password'|trans }}</a>
-            </p>
+            <a class="btn btn-primary" role="button" href=" {{ url('user_changePassword', {id: user.id}) }}"
+               title="{{ 'title_change_password'|trans }}">{{ 'title_change_password'|trans }}</a>
         {% endif %}
         {% if is_granted('ROLE_ADMIN') %}
             {% if "ROLE_ADMIN" in user.roles %}
-                <p><a href=" {{ url('user_grantAdmin', {id: user.id}) }}"
-                      title="{{ 'title_revoke_admin'|trans }}">{{ 'title_revoke_admin'|trans }}</a>
-                </p>
+                <a class="btn btn-primary" role="button" href=" {{ url('user_grantAdmin', {id: user.id}) }}"
+                   title="{{ 'title_revoke_admin'|trans }}">{{ 'title_revoke_admin'|trans }}</a>
             {% else %}
-                <p><a href=" {{ url('user_grantAdmin', {id: user.id}) }}"
-                      title="{{ 'title_grant_admin'|trans }}">{{ 'title_grant_admin'|trans }}</a>
+                <a class="btn btn-primary" role="button" href=" {{ url('user_grantAdmin', {id: user.id}) }}"
+                   title="{{ 'title_grant_admin'|trans }}">{{ 'title_grant_admin'|trans }}</a>
+            {% endif %}
+            {% if user.blocked %}
+                <a class="btn btn-primary" role="button" href=" {{ url('user_block', {id: user.id}) }}"
+                   title="{{ 'title_unblock_user'|trans }}">{{ 'title_unblock_user'|trans }}</a>
+            {% else %}
+                <a class="btn btn-primary" role="button" href=" {{ url('user_block', {id: user.id}) }}"
+                   title="{{ 'title_block_user'|trans }}">{{ 'title_block_user'|trans }}</a>
+            {% endif %}
+        {% endif %}
+        <h4>{{ 'title_search'|trans }}</h4>
+        {{ form(form) }}
+        <h2>{{ 'title_post_list'|trans }}</h2>
+        {% if pagination_posts is defined and pagination_posts.items|length %}
+            <div class="navigation text-center">
+                {{ knp_pagination_render(pagination_posts) }}
+            </div>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>{{ knp_pagination_sortable(pagination_posts, 'label_id'|trans, 'post.id') }}</th>
+                    <th>{{ knp_pagination_sortable(pagination_posts, 'label_created_at'|trans, 'post.createdAt') }}</th>
+                    <th>{{ knp_pagination_sortable(pagination_posts, 'label_updated_at'|trans, 'post.updatedAt') }}</th>
+                    <th>{{ knp_pagination_sortable(pagination_posts, 'label_title'|trans, 'post.title') }}</th>
+                    <th>{{ knp_pagination_sortable(pagination_posts, 'label_category'|trans, 'category.name') }}</th>
+                    {% if is_granted('MANAGE', user) %}
+                        <th>{{ knp_pagination_sortable(pagination_posts, 'label_publication'|trans, 'post.published') }}</th>
+                    {% endif %}
+                    <th>{{ 'label_tags'|trans }}</th>
+                    <th>{{ 'label_actions'|trans }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for post in pagination_posts.items %}
+                    <tr>
+                        <td>{{ post.id }}</td>
+                        <td>{{ post.createdAt|format_date('long') }}</td>
+                        <td>{{ post.updatedAt|format_date('long') }}</td>
+                        <td>{{ post.title }}</td>
+                        <td>
+                            <a href="{{ url('user_show', {id : user.id, 'filters.category_id' : post.category.id}) }}" title="{{ post.category.name }}">
+                                {{ post.category.name }}
+                            </a>
+                        </td>
+                        {% if is_granted('MANAGE', user) %}
+                            {% if post.published %}
+                                <td>{{ 'title_post_published'|trans }}</td>
+                            {% else %}
+                                <td>{{ 'title_post_not_published'|trans }}</td>
+                            {% endif %}
+                        {% endif %}
+                        <td>
+                            {% if post.tags is defined and post.tags|length %}
+                                {% for tag in post.tags %}
+                                <a href="{{ url('user_show', {id : user.id, 'filters.tag_id' : tag.id}) }}" title="{{ tag.name }}">
+                                    {{ tag.name }}</a>{% if not loop.last %},{% endif %}
+                                {% endfor %}
+                            {% else %}
+                                &nbsp;
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a class="btn btn-primary" role="button" href="{{ url('post_show', {id: post.id}) }}" title="{{ 'action_view'|trans }}">
+                                {{ 'action_view'|trans }}
+                            </a>
+                            {% if is_granted('MANAGE', post) %}
+                                <a class="btn btn-primary" role="button" href="{{ url('post_edit', {id: post.id}) }}" title="{{ 'action_edit'|trans }}">
+                                    {{ 'action_edit'|trans }}
+                                </a>
+                                <a class="btn btn-primary" role="button" href="{{ url('post_delete', {id: post.id}) }}" title="{{ 'action_delete'|trans }}">
+                                    {{ 'action_delete'|trans }}
+                                </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <div class="navigation text-center">
+                {{ knp_pagination_render(pagination_posts) }}
+            </div>
+        {% else %}
+            <p>
+                {{ 'message_empty_list'|trans }}
+            </p>
+        {% endif %}
+        {% if pagination_comments is defined and pagination_comments.items is defined %}
+            <h3>{{ 'title_comment_list'|trans }}</h3>
+            {% if pagination_comments.items|length %}
+                <div class="navigation text-center">
+                    {{ knp_pagination_render(pagination_comments) }}
+                </div>
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>{{ knp_pagination_sortable(pagination_comments, 'label_id'|trans, 'comment.id') }}</th>
+                        <th>{{ knp_pagination_sortable(pagination_comments, 'label_created_at'|trans, 'comment.createdAt') }}</th>
+                        <th>{{ knp_pagination_sortable(pagination_comments, 'label_updated_at'|trans, 'comment.updatedAt') }}</th>
+                        <th>{{ knp_pagination_sortable(pagination_comments, 'label_title'|trans, 'comment.title') }}</th>
+                        <th>{{ knp_pagination_sortable(pagination_comments, 'label_post'|trans, 'post.title') }}</th>
+                        <th>{{ 'label_content'|trans }}</th>
+                        {% if is_granted('MANAGE', user) %}
+                            <th>{{ 'label_actions'|trans }}</th>
+                        {% endif %}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for comment in pagination_comments.items %}
+                        <tr>
+                            <td>{{ comment.id }}</td>
+                            <td>{{ comment.createdAt|format_date('long') }}</td>
+                            <td>{{ comment.updatedAt|format_date('long') }}</td>
+                            <td>{{ comment.title }}</td>
+                            <td>
+                                <a href="{{ url('post_show', {id: comment.post.id}) }}" title="{{ comment.post.title }}">
+                                    {{ comment.post.title }}
+                                </a>
+                            </td>
+                            <td>{{ comment.content|markdown_to_html }}</td>
+                            {% if is_granted('MANAGE', comment) %}
+                                <td>
+                                    <a class="btn btn-primary" role="button" href="{{ url('comment_edit', {id: comment.id}) }}" title="{{ 'action_edit'|trans }}">
+                                        {{ 'action_edit'|trans }}
+                                    </a>
+                                    <a class="btn btn-primary" role="button" href="{{ url('comment_delete', {id: comment.id}) }}" title="{{ 'action_delete'|trans }}">
+                                        {{ 'action_delete'|trans }}
+                                    </a>
+                                </td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <div class="navigation text-center">
+                    {{ knp_pagination_render(pagination_comments) }}
+                </div>
+            {% else %}
+                <p>
+                    {{ 'message_empty_list'|trans }}
                 </p>
             {% endif %}
         {% endif %}

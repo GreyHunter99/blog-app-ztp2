@@ -62,6 +62,18 @@
                 <source>label_description</source>
                 <target>Description</target>
             </trans-unit>
+            <trans-unit id="label_publication">
+                <source>label_publication</source>
+                <target>Publication</target>
+            </trans-unit>
+            <trans-unit id="label_blocked">
+                <source>label_blocked</source>
+                <target>Blockade</target>
+            </trans-unit>
+            <trans-unit id="label_post">
+                <source>label_post</source>
+                <target>Post</target>
+            </trans-unit>
             <trans-unit id="message_empty_list">
                 <source>message_empty_list</source>
                 <target>Empty list.</target>
@@ -218,6 +230,26 @@
                 <source>title_logged_in_as</source>
                 <target>Logged in as:</target>
             </trans-unit>
+            <trans-unit id="title_post_published">
+                <source>title_post_published</source>
+                <target>Published</target>
+            </trans-unit>
+            <trans-unit id="title_post_not_published">
+                <source>title_post_not_published</source>
+                <target>Draw</target>
+            </trans-unit>
+            <trans-unit id="title_search">
+                <source>title_search</source>
+                <target>Search</target>
+            </trans-unit>
+            <trans-unit id="title_block_user">
+                <source>title_block_user</source>
+                <target>Block user</target>
+            </trans-unit>
+            <trans-unit id="title_unblock_user">
+                <source>title_unblock_user</source>
+                <target>Unblock user</target>
+            </trans-unit>
             <trans-unit id="action_logout">
                 <source>action_logout</source>
                 <target>Logout</target>
@@ -230,13 +262,9 @@
                 <source>action_register</source>
                 <target>Register</target>
             </trans-unit>
-            <trans-unit id="action_back_to_home">
-                <source>action_back_to_home</source>
-                <target>Back to home</target>
-            </trans-unit>
-            <trans-unit id="action_back_to_list">
-                <source>action_back_to_list</source>
-                <target>Back to list</target>
+            <trans-unit id="action_home">
+                <source>action_home</source>
+                <target>Home</target>
             </trans-unit>
             <trans-unit id="action_back_to_user">
                 <source>action_back_to_user</source>
@@ -277,6 +305,30 @@
             <trans-unit id="action_revoke">
                 <source>action_revoke</source>
                 <target>Revoke</target>
+            </trans-unit>
+            <trans-unit id="action_block">
+                <source>action_block</source>
+                <target>Block</target>
+            </trans-unit>
+            <trans-unit id="action_unblock">
+                <source>action_unblock</source>
+                <target>Unblock</target>
+            </trans-unit>
+            <trans-unit id="item_admin">
+                <source>item_admin</source>
+                <target>Admin</target>
+            </trans-unit>
+            <trans-unit id="item_user">
+                <source>item_user</source>
+                <target>User</target>
+            </trans-unit>
+            <trans-unit id="item_blocked">
+                <source>item_blocked</source>
+                <target>Blocked</target>
+            </trans-unit>
+            <trans-unit id="item_unblocked">
+                <source>item_unblocked</source>
+                <target>Unblocked</target>
             </trans-unit>
         </body>
     </file>

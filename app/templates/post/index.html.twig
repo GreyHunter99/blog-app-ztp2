@@ -5,16 +5,15 @@
 {% endblock %}
 
 {% block body %}
+    <h4>{{ 'title_search'|trans }}</h4>
+    {{ form(form) }}
     <h1>{{ 'title_post_list'|trans }}</h1>
-    <p><a href=" {{ url('post_create') }}"
-          title="{{ 'title_post_create'|trans }}">{{ 'title_post_create'|trans }}</a>
-    </p>
+    <a class="btn btn-primary" role="button" href=" {{ url('post_create') }}"
+       title="{{ 'title_post_create'|trans }}">{{ 'title_post_create'|trans }}</a>
     {% if pagination is defined and pagination.items|length %}
-
         <div class="navigation text-center">
             {{ knp_pagination_render(pagination) }}
         </div>
-
         <table class="table table-striped">
             <thead>
             <tr>
@@ -24,6 +23,9 @@
                 <th>{{ knp_pagination_sortable(pagination, 'label_title'|trans, 'post.title') }}</th>
                 <th>{{ knp_pagination_sortable(pagination, 'label_author'|trans, 'author.email') }}</th>
                 <th>{{ knp_pagination_sortable(pagination, 'label_category'|trans, 'category.name') }}</th>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <th>{{ knp_pagination_sortable(pagination, 'label_publication'|trans, 'post.published') }}</th>
+                {% endif %}
                 <th>{{ 'label_tags'|trans }}</th>
                 <th>{{ 'label_actions'|trans }}</th>
             </tr>
@@ -45,6 +47,13 @@
                             {{ post.category.name }}
                         </a>
                     </td>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        {% if post.published %}
+                            <td>{{ 'title_post_published'|trans }}</td>
+                        {% else %}
+                            <td>{{ 'title_post_not_published'|trans }}</td>
+                        {% endif %}
+                    {% endif %}
                     <td>
                         {% if post.tags is defined and post.tags|length %}
                             {% for tag in post.tags %}
@@ -56,14 +65,14 @@
                         {% endif %}
                     </td>
                     <td>
-                        <a href="{{ url('post_show', {id: post.id}) }}" title="{{ 'action_view'|trans }}">
+                        <a class="btn btn-primary" role="button" href="{{ url('post_show', {id: post.id}) }}" title="{{ 'action_view'|trans }}">
                             {{ 'action_view'|trans }}
                         </a>
                         {% if is_granted('MANAGE', post) %}
-                            <a href="{{ url('post_edit', {id: post.id}) }}" title="{{ 'action_edit'|trans }}">
+                            <a class="btn btn-primary" role="button" href="{{ url('post_edit', {id: post.id}) }}" title="{{ 'action_edit'|trans }}">
                                 {{ 'action_edit'|trans }}
                             </a>
-                            <a href="{{ url('post_delete', {id: post.id}) }}" title="{{ 'action_delete'|trans }}">
+                            <a class="btn btn-primary" role="button" href="{{ url('post_delete', {id: post.id}) }}" title="{{ 'action_delete'|trans }}">
                                 {{ 'action_delete'|trans }}
                             </a>
                         {% endif %}
@@ -72,11 +81,9 @@
             {% endfor %}
             </tbody>
         </table>
-
         <div class="navigation text-center">
             {{ knp_pagination_render(pagination) }}
         </div>
-
     {% else %}
         <p>
             {{ 'message_empty_list'|trans }}

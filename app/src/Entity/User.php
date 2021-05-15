@@ -104,6 +104,17 @@ class User implements UserInterface
     private $userData;
 
     /**
+     * Blocked.
+     *
+     * @var boolean
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     *
+     * @Assert\Type(type="boolean")
+     */
+    private $blocked;
+
+    /**
      * Getter for Id.
      *
      * @return int|null Result
@@ -233,5 +244,25 @@ class User implements UserInterface
         }
 
         $this->userData = $userData;
+    }
+
+    /**
+     * Getter for Blocked.
+     *
+     * @return bool|null Blocked
+     */
+    public function getBlocked(): ?bool
+    {
+        return $this->blocked;
+    }
+
+    /**
+     * Setter for Blocked.
+     *
+     * @param bool|null $blocked Blocked
+     */
+    public function setBlocked(?bool $blocked): void
+    {
+        $this->blocked = $blocked;
     }
 }

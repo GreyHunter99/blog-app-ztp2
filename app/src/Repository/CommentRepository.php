@@ -7,6 +7,7 @@ namespace App\Repository;
 
 use App\Entity\Comment;
 use App\Entity\Post;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
@@ -100,8 +101,32 @@ class CommentRepository extends ServiceEntityRepository
             )
             ->join('comment.post', 'post')
             ->join('comment.author', 'author')
-            ->where('comment.post = :post')
+            ->andWhere('comment.post = :post')
             ->setParameter('post', $post)
+            ->andWhere('author.blocked IS NULL OR author.blocked = :blocked')
+            ->setParameter('blocked', '0')
+            ->orderBy('comment.updatedAt', 'DESC');
+    }
+
+    /**
+     * Query comments by author.
+     *
+     * @param User  $user    User entity
+     *
+     * @return QueryBuilder Query builder
+     */
+    public function queryByAuthor(User $user): QueryBuilder
+    {
+        return $this->getOrCreateQueryBuilder()
+            ->select(
+                'partial comment.{id, createdAt, updatedAt, title, content}',
+                'partial post.{id, title}',
+                'author'
+            )
+            ->join('comment.post', 'post')
+            ->join('comment.author', 'author')
+            ->where('comment.author = :author')
+            ->setParameter('author', $user)
             ->orderBy('comment.updatedAt', 'DESC');
     }
 

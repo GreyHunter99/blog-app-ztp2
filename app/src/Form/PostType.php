@@ -10,6 +10,7 @@ use App\Entity\Post;
 use App\Form\DataTransformer\TagsDataTransformer;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -92,6 +93,15 @@ class PostType extends AbstractType
 
         $builder->get('tags')->addModelTransformer(
             $this->tagsDataTransformer
+        );
+
+        $builder->add(
+            'published',
+            CheckboxType::class,
+            [
+                'label' => 'label_publication',
+                'required' => false,
+            ]
         );
     }
 

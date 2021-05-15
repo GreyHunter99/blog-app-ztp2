@@ -96,6 +96,17 @@ class Post
     private $content;
 
     /**
+     * Published.
+     *
+     * @var boolean
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     *
+     * @Assert\Type(type="boolean")
+     */
+    private $published;
+
+    /**
      * Code.
      *
      * @var string
@@ -265,6 +276,26 @@ class Post
     public function setContent(string $content): void
     {
         $this->content = $content;
+    }
+
+    /**
+     * Getter for Published.
+     *
+     * @return bool|null Published
+     */
+    public function getPublished(): ?bool
+    {
+        return $this->published;
+    }
+
+    /**
+     * Setter for Published.
+     *
+     * @param bool|null $published Published
+     */
+    public function setPublished(?bool $published): void
+    {
+        $this->published = $published;
     }
 
     /**

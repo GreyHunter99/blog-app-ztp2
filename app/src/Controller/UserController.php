@@ -9,6 +9,8 @@ use App\Entity\User;
 use App\Entity\UserData;
 use App\Form\ChangePasswordType;
 use App\Form\UserDataType;
+use App\Service\CommentService;
+use App\Service\PostService;
 use App\Service\UserDataService;
 use App\Service\UserService;
 use Doctrine\ORM\OptimisticLockException;
@@ -16,6 +18,7 @@ use Doctrine\ORM\ORMException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\Extension\Core\Type\SearchType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -43,15 +46,33 @@ class UserController extends AbstractController
     private $userDataService;
 
     /**
+     * Post service.
+     *
+     * @var PostService
+     */
+    private $postService;
+
+    /**
+     * Comment service.
+     *
+     * @var CommentService
+     */
+    private $commentService;
+
+    /**
      * UserController constructor.
      *
      * @param UserService     $userService     User service
      * @param UserDataService $userDataService User data service
+     * @param PostService     $postService     Post service
+     * @param CommentService  $commentService  Comment service
      */
-    public function __construct(UserService $userService, UserDataService $userDataService)
+    public function __construct(UserService $userService, UserDataService $userDataService, PostService $postService, CommentService $commentService)
     {
         $this->userService = $userService;
         $this->userDataService = $userDataService;
+        $this->postService = $postService;
+        $this->commentService = $commentService;
     }
 
     /**
@@ -86,21 +107,65 @@ class UserController extends AbstractController
      * Show action.
      *
      * @param User $user User entity
+     * @param Request $request HTTP request
      *
      * @return Response HTTP response
      *
      * @Route(
      *     "/{id}",
-     *     methods={"GET"},
+     *     methods={"GET", "POST"},
      *     name="user_show",
      *     requirements={"id": "[1-9]\d*"},
      * )
      */
-    public function show(User $user): Response
+    public function show(User $user, Request $request): Response
     {
+        if ($user->getBlocked()) {
+            if(!$this->isGranted('ROLE_ADMIN')){
+                return $this->redirectToRoute('post_index');
+            }
+        }
+
+        $form = $this->createForm(SearchType::class);
+        $form->handleRequest($request);
+
+        $filters = [];
+        $filters['category_id'] = $request->query->getInt('filters_category_id');
+        $filters['tag_id'] = $request->query->getInt('filters_tag_id');
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $filters['search'] = $form->getData();
+        }
+
+        $mode = 'profile';
+        if($this->isGranted('MANAGE', $user)){
+            $mode = 'profile_author';
+        }
+
+        $pagination_posts = $this->postService->createPaginatedList(
+            $request->query->getInt('page', 1),
+            $mode,
+            $user,
+            $filters
+        );
+
+        $pagination_comments = null;
+        if($this->isGranted('MANAGE', $user)) {
+            $pagination_comments = $this->commentService->createPaginatedList(
+                $request->query->getInt('page', 1),
+                null,
+                $user
+            );
+        }
+
         return $this->render(
             'user/show.html.twig',
-            ['user' => $user]
+            [
+                'user' => $user,
+                'pagination_posts' => $pagination_posts,
+                'pagination_comments' => $pagination_comments,
+                'form' => $form->createView()
+            ]
         );
     }
 
@@ -267,4 +332,72 @@ class UserController extends AbstractController
             );
         }
     }
+
+    /**
+     * Block user action.
+     *
+     * @param Request $request HTTP request
+     * @param User    $user    User entity
+     *
+     * @return Response HTTP response
+     *
+     * @throws ORMException
+     * @throws OptimisticLockException
+     *
+     * @Route(
+     *     "/{id}/block",
+     *     methods={"GET", "PUT"},
+     *     requirements={"id": "[1-9]\d*"},
+     *     name="user_block",
+     * )
+     *
+     * @IsGranted(
+     *     "ROLE_ADMIN"
+     * )
+     */
+    public function block(Request $request, User $user): Response
+    {
+        $roles = $user->getRoles();
+
+        if (isset($roles[1]) && $this->userService->numberOfAdmins() == 1) {
+            $this->addFlash('danger', 'message_last_admin');
+
+            return $this->redirectToRoute('user_show', ['id' => $user->getId()]);
+        }
+
+        $form = $this->createForm(FormType::class, $user, ['method' => 'PUT']);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ($user->getBlocked()) {
+                $user->setBlocked(false);
+            } else {
+                $user->setBlocked(true);
+            }
+            $this->userService->save($user);
+
+            $this->addFlash('success', 'message_updated_successfully');
+
+            return $this->redirectToRoute('user_show', ['id' => $user->getId()]);
+        }
+
+        if ($user->getBlocked()) {
+            return $this->render(
+                'user/unblock.html.twig',
+                [
+                    'form' => $form->createView(),
+                    'user' => $user,
+                ]
+            );
+        } else {
+            return $this->render(
+                'user/block.html.twig',
+                [
+                    'form' => $form->createView(),
+                    'user' => $user,
+                ]
+            );
+        }
+    }
+
 }

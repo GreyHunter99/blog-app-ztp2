@@ -8,26 +8,49 @@
     <h1>{{ 'title_post_details'|trans({'%id%': post.id|default('')}) }}</h1>
     {% if post is defined and post|length %}
         <dl class="dl-horizontal">
+            <div class="item-horizontal">
             <dt>{{ 'label_id'|trans }}</dt>
             <dd>{{ post.id }}</dd>
+            </div>
+            <div class="item-horizontal">
             <dt>{{ 'label_created_at'|trans }}</dt>
             <dd>{{ post.createdAt|format_date('long') }}</dd>
+            </div>
+            <div class="item-horizontal">
             <dt>{{ 'label_updated_at'|trans }}</dt>
             <dd>{{ post.updatedAt|format_date('long') }}</dd>
+            </div>
+            <div class="item-horizontal">
             <dt>{{ 'label_title'|trans }}</dt>
             <dd>{{  post.title }}</dd>
+            </div>
+            {% if is_granted('MANAGE', post) %}
+                <div class="item-horizontal">
+                    <dt>{{ 'label_publication'|trans }}</dt>
+                    {% if post.published %}
+                        <dd>{{ 'title_post_published'|trans }}</dd>
+                    {% else %}
+                        <dd>{{ 'title_post_not_published'|trans }}</dd>
+                    {% endif %}
+                </div>
+            {% endif %}
+            <div class="item-horizontal">
             <dt>{{ 'label_author'|trans }}</dt>
             <dd>
                 <a href="{{ url('user_show', {id: post.author.id}) }}" title="{{ post.author.username }}">
                     {{ post.author.username }}
                 </a>
             </dd>
+            </div>
+            <div class="item-horizontal">
             <dt>{{ 'label_category'|trans }}</dt>
             <dd>
                 <a href="{{ url('post_index', {'filters.category_id' : post.category.id}) }}" title="{{ post.category.name }}">
                     {{ post.category.name }}
                 </a>
             </dd>
+            </div>
+            <div class="item-horizontal">
             <dt>{{ 'label_tags'|trans }}</dt>
             <dd>
                 {% if post.tags is defined and post.tags|length %}
@@ -39,32 +62,24 @@
                     &nbsp;
                 {% endif %}
             </dd>
+            </div>
             <dt>{{ 'label_content'|trans }}</dt>
             <dd>{{  post.content|markdown_to_html }}</dd>
             {% if is_granted('MANAGE', post) %}
                 <dd>
-                    <a href="{{ url('post_edit', {id: post.id}) }}" title="{{ 'action_edit'|trans }}">
+                    <a class="btn btn-primary" role="button" href="{{ url('post_edit', {id: post.id}) }}" title="{{ 'action_edit'|trans }}">
                         {{ 'action_edit'|trans }}
                     </a>
-                </dd>
-                <dd>
-                    <a href="{{ url('post_delete', {id: post.id}) }}" title="{{ 'action_delete'|trans }}">
+                    <a class="btn btn-primary" role="button" href="{{ url('post_delete', {id: post.id}) }}" title="{{ 'action_delete'|trans }}">
                         {{ 'action_delete'|trans }}
                     </a>
                 </dd>
             {% endif %}
         </dl>
-        <p>
-            <a href="{{ url('post_index') }}" title="{{ 'action_back_to_list'|trans }}">
-                {{ 'action_back_to_list'|trans }}
-            </a>
-        </p>
         <h2>{{ 'title_comment_list'|trans }}</h2>
-        <p>
-            <a href=" {{ url('comment_create', {id: post.id}) }}" title="{{ 'title_comment_create'|trans }}">
-                {{ 'title_comment_create'|trans }}
-            </a>
-        </p>
+        <a class="btn btn-primary" role="button" href=" {{ url('comment_create', {id: post.id}) }}" title="{{ 'title_comment_create'|trans }}">
+            {{ 'title_comment_create'|trans }}
+        </a>
         {% if pagination is defined and pagination.items|length %}
             <div class="navigation text-center">
                 {{ knp_pagination_render(pagination) }}
@@ -96,10 +111,10 @@
                         <td>{{ comment.content|markdown_to_html }}</td>
                         <td>
                             {% if is_granted('MANAGE', comment) %}
-                                <a href="{{ url('comment_edit', {id: comment.id}) }}" title="{{ 'action_edit'|trans }}">
+                                <a class="btn btn-primary" role="button" href="{{ url('comment_edit', {id: comment.id}) }}" title="{{ 'action_edit'|trans }}">
                                     {{ 'action_edit'|trans }}
                                 </a>
-                                <a href="{{ url('comment_delete', {id: comment.id}) }}" title="{{ 'action_delete'|trans }}">
+                                <a class="btn btn-primary" role="button" href="{{ url('comment_delete', {id: comment.id}) }}" title="{{ 'action_delete'|trans }}">
                                     {{ 'action_delete'|trans }}
                                 </a>
                             {% endif %}

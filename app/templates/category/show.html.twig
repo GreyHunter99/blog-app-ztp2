@@ -8,38 +8,39 @@
     <h1>{{ 'title_category_details'|trans({'%id%': category.id|default('')}) }}</h1>
     {% if category is defined and category|length %}
         <dl class="dl-horizontal">
+            <div class="item-horizontal">
             <dt>{{ 'label_id'|trans }}</dt>
             <dd>{{ category.id }}</dd>
+            </div>
+            <div class="item-horizontal">
             <dt>{{ 'label_created_at'|trans }}</dt>
             <dd>{{ category.createdAt|format_date('long') }}</dd>
+            </div>
+            <div class="item-horizontal">
             <dt>{{ 'label_updated_at'|trans }}</dt>
             <dd>{{ category.updatedAt|format_date('long') }}</dd>
+            </div>
+            <div class="item-horizontal">
             <dt>{{ 'label_name'|trans }}</dt>
             <dd>
                 <a href="{{ url('post_index', {'filters.category_id' : category.id}) }}" title="{{ category.name }}">
                     {{ category.name }}
                 </a>
             </dd>
+            </div>
             {% if is_granted('ROLE_ADMIN') %}
                 <dd>
-                    <a href="{{ url('category_edit', {id: category.id}) }}" title="{{ 'action_edit'|trans }}">
+                    <a class="btn btn-primary" role="button" href="{{ url('category_edit', {id: category.id}) }}" title="{{ 'action_edit'|trans }}">
                         {{ 'action_edit'|trans }}
                     </a>
-                </dd>
                 {% if not category.posts|length %}
-                    <dd>
-                        <a href="{{ url('category_delete', {id: category.id}) }}" title="{{ 'action_delete'|trans }}">
+                        <a class="btn btn-primary" role="button" href="{{ url('category_delete', {id: category.id}) }}" title="{{ 'action_delete'|trans }}">
                             {{ 'action_delete'|trans }}
                         </a>
-                    </dd>
                 {% endif %}
+                </dd>
             {% endif %}
         </dl>
-        <p>
-            <a href="{{ url('category_index') }}" title="{{ 'action_back_to_list'|trans }}">
-                {{ 'action_back_to_list'|trans }}
-            </a>
-        </p>
     {% else %}
         <p>
             {{ 'message_item_not_found'|trans }}

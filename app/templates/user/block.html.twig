@@ -1,0 +1,11 @@
+{% include 'default/_form.html.twig' with {
+    page_title: 'title_block_user',
+    page_title_param: {'%id%': user.id},
+    attr: {
+        method: 'PUT',
+        action: url('user_block', {'id': user.id}),
+    },
+    form: form,
+    submit_label: 'action_block'|trans,
+    back_to_user: 'user_show',
+} %}

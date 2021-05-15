@@ -8,36 +8,37 @@
     <h1>{{ 'title_tag_details'|trans({'%id%': tag.id|default('')}) }}</h1>
     {% if tag is defined and tag|length %}
         <dl class="dl-horizontal">
+            <div class="item-horizontal">
             <dt>{{ 'label_id'|trans }}</dt>
             <dd>{{ tag.id }}</dd>
+            </div>
+            <div class="item-horizontal">
             <dt>{{ 'label_created_at'|trans }}</dt>
             <dd>{{ tag.createdAt|format_date('long') }}</dd>
+            </div>
+            <div class="item-horizontal">
             <dt>{{ 'label_updated_at'|trans }}</dt>
             <dd>{{ tag.updatedAt|format_date('long') }}</dd>
+            </div>
+            <div class="item-horizontal">
             <dt>{{ 'label_name'|trans }}</dt>
             <dd>
                 <a href="{{ url('post_index', {'filters.tag_id' : tag.id}) }}" title="{{ tag.name }}">
                     {{ tag.name }}
                 </a>
             </dd>
+            </div>
             {% if is_granted('ROLE_ADMIN') %}
                 <dd>
-                    <a href="{{ url('tag_edit', {id: tag.id}) }}" title="{{ 'action_edit'|trans }}">
+                    <a class="btn btn-primary" role="button" href="{{ url('tag_edit', {id: tag.id}) }}" title="{{ 'action_edit'|trans }}">
                         {{ 'action_edit'|trans }}
                     </a>
-                </dd>
-                <dd>
-                    <a href="{{ url('tag_delete', {id: tag.id}) }}" title="{{ 'action_delete'|trans }}">
+                    <a class="btn btn-primary" role="button" href="{{ url('tag_delete', {id: tag.id}) }}" title="{{ 'action_delete'|trans }}">
                         {{ 'action_delete'|trans }}
                     </a>
                 </dd>
             {% endif %}
         </dl>
-        <p>
-            <a href="{{ url('tag_index') }}" title="{{ 'action_back_to_list'|trans }}">
-                {{ 'action_back_to_list'|trans }}
-            </a>
-        </p>
     {% else %}
         <p>
             {{ 'message_item_not_found'|trans }}

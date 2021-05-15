@@ -1,0 +1,25 @@
+a:link {
+    text-decoration: none;
+}
+
+.btn{
+    margin: 5px;
+}
+
+.container-fluid {
+    text-align: center;
+}
+
+.item-horizontal {
+    display: inline-block;
+    margin: 10px;
+}
+
+.navbar, nav{
+    display: inline-block;
+}
+
+#search {
+    display: inline-block;
+    width: 40%;
+}

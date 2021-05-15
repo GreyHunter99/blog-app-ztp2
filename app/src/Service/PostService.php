@@ -6,6 +6,7 @@
 namespace App\Service;
 
 use App\Entity\Post;
+use App\Entity\User;
 use App\Repository\PostRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
@@ -64,17 +65,40 @@ class PostService
     /**
      * Create paginated list.
      *
-     * @param int                                                 $page    Page number
-     * @param array                                               $filters Filters array
+     * @param int       $page    Page number
+     * @param string    $mode    Mode
+     * @param User|null $user    User
+     * @param array     $filters Filters array
      *
      * @return PaginationInterface Paginated list
      */
-    public function createPaginatedList(int $page, array $filters = []): PaginationInterface
+    public function createPaginatedList(int $page, string $mode, ?User $user, array $filters = []): PaginationInterface
     {
         $filters = $this->prepareFilters($filters);
 
+        if($mode == 'main_admin') {
+            return $this->paginator->paginate(
+                $this->postRepository->queryAll($filters),
+                $page,
+                PostRepository::PAGINATOR_ITEMS_PER_PAGE
+            );
+        }
+        if($mode == 'main') {
+            return $this->paginator->paginate(
+                $this->postRepository->queryPublished($filters),
+                $page,
+                PostRepository::PAGINATOR_ITEMS_PER_PAGE
+            );
+        }
+        if($mode == 'profile_author') {
+            return $this->paginator->paginate(
+                $this->postRepository->queryByAuthor($user, $filters),
+                $page,
+                PostRepository::PAGINATOR_ITEMS_PER_PAGE
+            );
+        }
         return $this->paginator->paginate(
-            $this->postRepository->queryAll($filters),
+            $this->postRepository->queryPublishedByAuthor($user, $filters),
             $page,
             PostRepository::PAGINATOR_ITEMS_PER_PAGE
         );
@@ -130,6 +154,10 @@ class PostService
             if (null !== $tag) {
                 $resultFilters['tag'] = $tag;
             }
+        }
+
+        if (isset($filters['search'])){
+            $resultFilters['search'] = $filters['search'];
         }
 
         return $resultFilters;
