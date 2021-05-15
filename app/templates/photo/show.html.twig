@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ 'title_photo_details'|trans({'%id%': photo.id|default('')}) }}
+{% endblock %}
+
+{% block body %}
+    <h1>{{ 'title_photo_details'|trans({'%id%': photo.id|default('')}) }}</h1>
+    <a class="btn btn-primary" role="button" href="{{ url('photo_index', {id: photo.post.id}) }}">
+        {{ 'action_back_to_list'|trans }}</a>
+    {% if photo is defined and photo|length %}
+        <dl class="dl-horizontal">
+            <div class="item-horizontal">
+                <dt>{{ 'label_id'|trans }}</dt>
+                <dd>{{ photo.id }}</dd>
+            </div>
+            <div class="item-horizontal">
+                <dt>{{ 'label_filename'|trans }}</dt>
+                <dd>{{ photo.filename }}</dd>
+            </div>
+            <dd>
+                <a class="btn btn-primary" role="button" href="{{ url('photo_edit', {id: photo.id}) }}" title="{{ 'action_edit'|trans }}">
+                    {{ 'action_edit'|trans }}
+                </a>
+                <a class="btn btn-primary" role="button" href="{{ url('photo_delete', {id: photo.id}) }}" title="{{ 'action_delete'|trans }}">
+                    {{ 'action_delete'|trans }}
+                </a>
+            </dd>
+        </dl>
+        {% if photo.filename is defined and photo.filename|length %}
+            <img class="nav-profile-img" alt="" src="{{ asset('uploads/photos/'~ photo.filename) }}">
+        {% endif %}
+    {% else %}
+        <p>
+            {{ 'message_item_not_found'|trans }}
+        </p>
+    {% endif %}
+{% endblock %}

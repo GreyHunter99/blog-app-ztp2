@@ -63,10 +63,11 @@
                 {% endif %}
             </dd>
             </div>
-            <dt>{{ 'label_content'|trans }}</dt>
-            <dd>{{  post.content|markdown_to_html }}</dd>
             {% if is_granted('MANAGE', post) %}
                 <dd>
+                    <a class="btn btn-primary" role="button" href=" {{ url('photo_index', {id: post.id}) }}" title="{{ 'title_photo_list'|trans }}">
+                        {{ 'title_photo_list'|trans }}
+                    </a>
                     <a class="btn btn-primary" role="button" href="{{ url('post_edit', {id: post.id}) }}" title="{{ 'action_edit'|trans }}">
                         {{ 'action_edit'|trans }}
                     </a>
@@ -75,6 +76,8 @@
                     </a>
                 </dd>
             {% endif %}
+            <dt>{{ 'label_content'|trans }}</dt>
+            <dd>{{  post.content|markdown_to_html }}</dd>
         </dl>
         <h2>{{ 'title_comment_list'|trans }}</h2>
         <a class="btn btn-primary" role="button" href=" {{ url('comment_create', {id: post.id}) }}" title="{{ 'title_comment_create'|trans }}">

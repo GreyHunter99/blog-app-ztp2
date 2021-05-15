@@ -74,6 +74,14 @@
                 <source>label_post</source>
                 <target>Post</target>
             </trans-unit>
+             <trans-unit id="label_filename">
+                <source>label_filename</source>
+                <target>Nazwa pliku</target>
+            </trans-unit>
+            <trans-unit id="label_photo">
+                <source>label_photo</source>
+                <target>Zdjęcie</target>
+            </trans-unit>
             <trans-unit id="message_empty_list">
                 <source>message_empty_list</source>
                 <target>Pusta lista.</target>
@@ -250,6 +258,26 @@
                 <source>title_unblock_user</source>
                 <target>Odblokuj użytkownika</target>
             </trans-unit>
+            <trans-unit id="title_photo_list">
+                <source>title_photo_list</source>
+                <target>Lista zdjęć</target>
+            </trans-unit>
+            <trans-unit id="title_photo_details">
+                <source>title_photo_details</source>
+                <target>Szczegóły zdjęcia</target>
+            </trans-unit>
+            <trans-unit id="title_photo_create">
+                <source>title_photo_create</source>
+                <target>Dodaj zdjęcie</target>
+            </trans-unit>
+            <trans-unit id="title_photo_edit">
+                <source>title_photo_edit</source>
+                <target>Edytuj zdjęcie</target>
+            </trans-unit>
+            <trans-unit id="title_photo_delete">
+                <source>title_photo_delete</source>
+                <target>Usuń zdjęcie</target>
+            </trans-unit>
             <trans-unit id="action_logout">
                 <source>action_logout</source>
                 <target>Wyloguj</target>
@@ -265,6 +293,10 @@
             <trans-unit id="action_home">
                 <source>action_home</source>
                 <target>Strona główna</target>
+            </trans-unit>
+            <trans-unit id="action_back_to_list">
+                <source>action_back_to_list</source>
+                <target>Powrót do listy</target>
             </trans-unit>
             <trans-unit id="action_back_to_post">
                 <source>action_back_to_post</source>

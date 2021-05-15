@@ -57,6 +57,18 @@ parameters:
                 {{ 'action_back_to_post'|trans }}</a>
         </div>
     {% endif %}
+    {% if back_to_photo_list_with_post|default(false) %}
+        <div class="form-group row float-sm-left">
+            <a class="btn btn-primary" role="button" href="{{ url(back_to_photo_list_with_post, {id: post.id}) }}">
+                {{ 'action_back_to_list'|trans }}</a>
+        </div>
+    {% endif %}
+    {% if back_to_photo_list_with_photo|default(false) %}
+        <div class="form-group row float-sm-left">
+            <a class="btn btn-primary" role="button" href="{{ url(back_to_photo_list_with_photo, {id: photo.post.id}) }}">
+                {{ 'action_back_to_list'|trans }}</a>
+        </div>
+    {% endif %}
     {{ form_end(form) }}
 
 {% endblock %}

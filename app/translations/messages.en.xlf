@@ -74,6 +74,14 @@
                 <source>label_post</source>
                 <target>Post</target>
             </trans-unit>
+             <trans-unit id="label_filename">
+                <source>label_filename</source>
+                <target>File name</target>
+            </trans-unit>
+            <trans-unit id="label_photo">
+                <source>label_photo</source>
+                <target>Photo</target>
+            </trans-unit>
             <trans-unit id="message_empty_list">
                 <source>message_empty_list</source>
                 <target>Empty list.</target>
@@ -250,6 +258,26 @@
                 <source>title_unblock_user</source>
                 <target>Unblock user</target>
             </trans-unit>
+            <trans-unit id="title_photo_list">
+                <source>title_photo_list</source>
+                <target>Photo list</target>
+            </trans-unit>
+            <trans-unit id="title_photo_details">
+                <source>title_photo_details</source>
+                <target>Photo details</target>
+            </trans-unit>
+            <trans-unit id="title_photo_create">
+                <source>title_photo_create</source>
+                <target>Add photo</target>
+            </trans-unit>
+            <trans-unit id="title_photo_edit">
+                <source>title_photo_edit</source>
+                <target>Edit photo</target>
+            </trans-unit>
+            <trans-unit id="title_photo_delete">
+                <source>title_photo_delete</source>
+                <target>Delete photo</target>
+            </trans-unit>
             <trans-unit id="action_logout">
                 <source>action_logout</source>
                 <target>Logout</target>
@@ -265,6 +293,10 @@
             <trans-unit id="action_home">
                 <source>action_home</source>
                 <target>Home</target>
+            </trans-unit>
+            <trans-unit id="action_back_to_list">
+                <source>action_back_to_list</source>
+                <target>Back to list</target>
             </trans-unit>
             <trans-unit id="action_back_to_user">
                 <source>action_back_to_user</source>

@@ -180,12 +180,27 @@ class Post
     private $author;
 
     /**
+     * Photo.
+     *
+     * @var ArrayCollection|Photo[] $photos Photos
+     *
+     * @ORM\OneToMany(
+     *     targetEntity="App\Entity\Photo",
+     *     mappedBy="post",
+     *     orphanRemoval=true,
+     *     fetch="EXTRA_LAZY",
+     * )
+     */
+    private $photos;
+
+    /**
      * Post constructor.
      */
     public function __construct()
     {
         $this->tags = new ArrayCollection();
         $this->comments = new ArrayCollection();
+        $this->photos = new ArrayCollection();
     }
 
     /**
@@ -436,5 +451,51 @@ class Post
     public function setAuthor(?User $author): void
     {
         $this->author = $author;
+    }
+
+    /**
+     * Get photos.
+     *
+     * @return Collection|Photo[]
+     */
+    public function getPhotos(): Collection
+    {
+        return $this->photos;
+    }
+
+    /**
+     * Add photo to collection.
+     *
+     * @param Photo $photo Photo entity
+     *
+     * @return $this
+     */
+    public function addPhoto(Photo $photo): self
+    {
+        if (!$this->photos->contains($photo)) {
+            $this->photos[] = $photo;
+            $photo->setPost($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove photo from collection.
+     *
+     * @param Photo $photo Photo entity
+     *
+     * @return $this
+     */
+    public function removePhoto(Photo $photo): self
+    {
+        if ($this->photos->removeElement($photo)) {
+            // set the owning side to null (unless already changed)
+            if ($photo->getPost() === $this) {
+                $photo->setPost(null);
+            }
+        }
+
+        return $this;
     }
 }

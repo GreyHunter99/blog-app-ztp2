@@ -1,0 +1,10 @@
+{% include 'default/_form.html.twig' with {
+    page_title: 'title_photo_create',
+    attr: {
+        method: 'POST',
+        action: url('photo_create', {'id': post.id})
+    },
+    form: form,
+    submit_label: 'action_create'|trans,
+    back_to_photo_list_with_post: 'photo_index',
+} %}

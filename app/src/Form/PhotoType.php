@@ -1,23 +1,21 @@
 <?php
 /**
- * Registration type.
+ * Photo type.
  */
 
 namespace App\Form;
 
-use App\Entity\User;
-use App\Entity\UserData;
+use App\Entity\Photo;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Image;
 
 /**
- * Class RegistrationType.
+ * Class PhotoType.
  */
-class RegistrationType extends AbstractType
+class PhotoType extends AbstractType
 {
     /**
      * Builds the form.
@@ -33,30 +31,24 @@ class RegistrationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add(
-            'email',
-            EmailType::class,
+            'file',
+            FileType::class,
             [
-                'label' => 'label_email',
+                'mapped' => false,
+                'label' => 'label_photo',
                 'required' => true,
-                'attr' => ['max_length' => 180],
-            ]
-        );
-        $builder->add(
-            'password',
-            RepeatedType::class, [
-                'type' => PasswordType::class,
-                'invalid_message' => 'Oba pola hasła muszą się zgadzać.',
-                'required' => true,
-                'first_options' => ['label' => 'label_password'],
-                'second_options' => ['label' => 'label_repeat_password'],
-            ]
-        );
-        $builder->add(
-            'userData',
-            UserDataType::class,
-            [
-                'label' => false,
-                'data_class' => UserData::class,
+                'constraints' => new Image(
+                    [
+                        'maxSize' => '1024k',
+                        'mimeTypes' => [
+                            'image/png',
+                            'image/jpeg',
+                            'image/pjpeg',
+                            'image/jpeg',
+                            'image/pjpeg',
+                        ],
+                    ]
+                ),
             ]
         );
     }
@@ -68,7 +60,7 @@ class RegistrationType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults(['data_class' => User::class]);
+        $resolver->setDefaults(['data_class' => Photo::class]);
     }
 
     /**
@@ -81,6 +73,6 @@ class RegistrationType extends AbstractType
      */
     public function getBlockPrefix(): string
     {
-        return 'user';
+        return 'photo';
     }
 }

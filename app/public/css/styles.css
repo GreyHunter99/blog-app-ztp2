@@ -30,6 +30,10 @@ form {
 }
 
 .login-form {
-    margin-left: 7%;
-    margin-right: 7%;
+    margin-left: 9%;
+    margin-right: 9%;
+}
+
+#user_userData {
+    width: 100%;
 }
