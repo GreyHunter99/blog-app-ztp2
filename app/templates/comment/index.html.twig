@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ 'title_comment_list'|trans }}
+{% endblock %}
+
+{% block body %}
+    <h1>
+        {{ 'title_comment_list'|trans }}
+        {% if user is defined %}
+            {{ user }}
+        {% endif %}
+    </h1>
+    {% if pagination is defined and pagination.items|length %}
+        <div class="navigation text-center">
+            {{ knp_pagination_render(pagination) }}
+        </div>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>{{ knp_pagination_sortable(pagination, 'label_id'|trans, 'comment.id') }}</th>
+                <th>{{ knp_pagination_sortable(pagination, 'label_created_at'|trans, 'comment.createdAt') }}</th>
+                <th>{{ knp_pagination_sortable(pagination, 'label_updated_at'|trans, 'comment.updatedAt') }}</th>
+                <th>{{ knp_pagination_sortable(pagination, 'label_title'|trans, 'comment.title') }}</th>
+                <th>{{ knp_pagination_sortable(pagination, 'label_post'|trans, 'post.title') }}</th>
+                {% if user is not defined %}
+                    <th>{{ knp_pagination_sortable(pagination, 'label_author'|trans, 'author.email') }}</th>
+                {% endif %}
+                <th>{{ 'label_content'|trans }}</th>
+                <th>{{ 'label_actions'|trans }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for comment in pagination.items %}
+                <tr>
+                    <td>{{ comment.id }}</td>
+                    <td>{{ comment.createdAt|format_date('long') }}</td>
+                    <td>{{ comment.updatedAt|format_date('long') }}</td>
+                    <td>{{ comment.title }}</td>
+                    <td>
+                        <a href="{{ url('post_show', {id: comment.post.id}) }}" title="{{ comment.post.title }}">
+                            {{ comment.post.title }}
+                        </a>
+                    </td>
+                    {% if user is not defined %}
+                        <td>
+                            <a href="{{ url('user_show', {id: comment.author.id}) }}" title="{{ comment.author.username }}">
+                                {{ comment.author.username }}
+                            </a>
+                        </td>
+                    {% endif %}
+                    <td>{{ comment.content }}</td>
+                    <td>
+                        <a class="btn btn-primary" role="button" href="{{ url('comment_edit', {id: comment.id}) }}" title="{{ 'action_edit'|trans }}">
+                            {{ 'action_edit'|trans }}
+                        </a>
+                        <a class="btn btn-primary" role="button" href="{{ url('comment_delete', {id: comment.id}) }}" title="{{ 'action_delete'|trans }}">
+                            {{ 'action_delete'|trans }}
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <div class="navigation text-center">
+            {{ knp_pagination_render(pagination) }}
+        </div>
+    {% else %}
+        <p>
+            {{ 'message_empty_list'|trans }}
+        </p>
+    {% endif %}
+{% endblock %}

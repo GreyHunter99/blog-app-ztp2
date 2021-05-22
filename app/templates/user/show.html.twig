@@ -54,10 +54,10 @@
         {% if is_granted('MANAGE', user) %}
             <a class="btn btn-primary" role="button" href=" {{ url('user_changeData', {id: user.userData.id}) }}"
                title="{{ 'title_change_data'|trans }}">{{ 'title_change_data'|trans }}</a>
-        {% endif %}
-        {% if is_granted('MANAGE', user) %}
             <a class="btn btn-primary" role="button" href=" {{ url('user_changePassword', {id: user.id}) }}"
                title="{{ 'title_change_password'|trans }}">{{ 'title_change_password'|trans }}</a>
+            <a class="btn btn-primary" role="button" href=" {{ url('comment_index', {id: user.id}) }}"
+               title="{{ 'title_comment_list'|trans }}">{{ 'title_comment_list'|trans }}</a>
         {% endif %}
         {% if is_granted('ROLE_ADMIN') %}
             {% if "ROLE_ADMIN" in user.roles %}
@@ -78,27 +78,27 @@
         <h4>{{ 'title_search'|trans }}</h4>
         {{ form(form) }}
         <h2>{{ 'title_post_list'|trans }}</h2>
-        {% if pagination_posts is defined and pagination_posts.items|length %}
+        {% if pagination is defined and pagination.items|length %}
             <div class="navigation text-center">
-                {{ knp_pagination_render(pagination_posts) }}
+                {{ knp_pagination_render(pagination) }}
             </div>
             <table class="table table-striped">
                 <thead>
                 <tr>
-                    <th>{{ knp_pagination_sortable(pagination_posts, 'label_id'|trans, 'post.id') }}</th>
-                    <th>{{ knp_pagination_sortable(pagination_posts, 'label_created_at'|trans, 'post.createdAt') }}</th>
-                    <th>{{ knp_pagination_sortable(pagination_posts, 'label_updated_at'|trans, 'post.updatedAt') }}</th>
-                    <th>{{ knp_pagination_sortable(pagination_posts, 'label_title'|trans, 'post.title') }}</th>
-                    <th>{{ knp_pagination_sortable(pagination_posts, 'label_category'|trans, 'category.name') }}</th>
+                    <th>{{ knp_pagination_sortable(pagination, 'label_id'|trans, 'post.id') }}</th>
+                    <th>{{ knp_pagination_sortable(pagination, 'label_created_at'|trans, 'post.createdAt') }}</th>
+                    <th>{{ knp_pagination_sortable(pagination, 'label_updated_at'|trans, 'post.updatedAt') }}</th>
+                    <th>{{ knp_pagination_sortable(pagination, 'label_title'|trans, 'post.title') }}</th>
+                    <th>{{ knp_pagination_sortable(pagination, 'label_category'|trans, 'category.name') }}</th>
                     {% if is_granted('MANAGE', user) %}
-                        <th>{{ knp_pagination_sortable(pagination_posts, 'label_publication'|trans, 'post.published') }}</th>
+                        <th>{{ knp_pagination_sortable(pagination, 'label_publication'|trans, 'post.published') }}</th>
                     {% endif %}
                     <th>{{ 'label_tags'|trans }}</th>
                     <th>{{ 'label_actions'|trans }}</th>
                 </tr>
                 </thead>
                 <tbody>
-                {% for post in pagination_posts.items %}
+                {% for post in pagination.items %}
                     <tr>
                         <td>{{ post.id }}</td>
                         <td>{{ post.createdAt|format_date('long') }}</td>
@@ -144,68 +144,12 @@
                 </tbody>
             </table>
             <div class="navigation text-center">
-                {{ knp_pagination_render(pagination_posts) }}
+                {{ knp_pagination_render(pagination) }}
             </div>
         {% else %}
             <p>
                 {{ 'message_empty_list'|trans }}
             </p>
-        {% endif %}
-        {% if pagination_comments is defined and pagination_comments.items is defined %}
-            <h3>{{ 'title_comment_list'|trans }}</h3>
-            {% if pagination_comments.items|length %}
-                <div class="navigation text-center">
-                    {{ knp_pagination_render(pagination_comments) }}
-                </div>
-                <table class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th>{{ knp_pagination_sortable(pagination_comments, 'label_id'|trans, 'comment.id') }}</th>
-                        <th>{{ knp_pagination_sortable(pagination_comments, 'label_created_at'|trans, 'comment.createdAt') }}</th>
-                        <th>{{ knp_pagination_sortable(pagination_comments, 'label_updated_at'|trans, 'comment.updatedAt') }}</th>
-                        <th>{{ knp_pagination_sortable(pagination_comments, 'label_title'|trans, 'comment.title') }}</th>
-                        <th>{{ knp_pagination_sortable(pagination_comments, 'label_post'|trans, 'post.title') }}</th>
-                        <th>{{ 'label_content'|trans }}</th>
-                        {% if is_granted('MANAGE', user) %}
-                            <th>{{ 'label_actions'|trans }}</th>
-                        {% endif %}
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for comment in pagination_comments.items %}
-                        <tr>
-                            <td>{{ comment.id }}</td>
-                            <td>{{ comment.createdAt|format_date('long') }}</td>
-                            <td>{{ comment.updatedAt|format_date('long') }}</td>
-                            <td>{{ comment.title }}</td>
-                            <td>
-                                <a href="{{ url('post_show', {id: comment.post.id}) }}" title="{{ comment.post.title }}">
-                                    {{ comment.post.title }}
-                                </a>
-                            </td>
-                            <td>{{ comment.content|markdown_to_html }}</td>
-                            {% if is_granted('MANAGE', comment) %}
-                                <td>
-                                    <a class="btn btn-primary" role="button" href="{{ url('comment_edit', {id: comment.id}) }}" title="{{ 'action_edit'|trans }}">
-                                        {{ 'action_edit'|trans }}
-                                    </a>
-                                    <a class="btn btn-primary" role="button" href="{{ url('comment_delete', {id: comment.id}) }}" title="{{ 'action_delete'|trans }}">
-                                        {{ 'action_delete'|trans }}
-                                    </a>
-                                </td>
-                            {% endif %}
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-                <div class="navigation text-center">
-                    {{ knp_pagination_render(pagination_comments) }}
-                </div>
-            {% else %}
-                <p>
-                    {{ 'message_empty_list'|trans }}
-                </p>
-            {% endif %}
         {% endif %}
     {% else %}
         <p>

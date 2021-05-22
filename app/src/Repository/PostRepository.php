@@ -195,7 +195,7 @@ class PostRepository extends ServiceEntityRepository
         }
 
         if (isset($filters['search'])) {
-            $queryBuilder->andWhere($queryBuilder->expr()->like(':search', 'post.title'))
+            $queryBuilder->andWhere('REGEXP(post.title, :search) = true')
                 ->setParameter('search', $filters['search']);
         }
 

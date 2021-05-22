@@ -81,6 +81,13 @@ class CommentRepository extends ServiceEntityRepository
     public function queryAll(): QueryBuilder
     {
         return $this->getOrCreateQueryBuilder()
+            ->select(
+                'partial comment.{id, createdAt, updatedAt, title, content}',
+                'partial post.{id, title}',
+                'author'
+            )
+            ->join('comment.post', 'post')
+            ->join('comment.author', 'author')
             ->orderBy('comment.updatedAt', 'DESC');
     }
 
@@ -125,7 +132,7 @@ class CommentRepository extends ServiceEntityRepository
             )
             ->join('comment.post', 'post')
             ->join('comment.author', 'author')
-            ->where('comment.author = :author')
+            ->andWhere('comment.author = :author')
             ->setParameter('author', $user)
             ->orderBy('comment.updatedAt', 'DESC');
     }

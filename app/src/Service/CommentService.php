@@ -64,8 +64,16 @@ class CommentService
             );
         }
 
+        if ($user) {
+            return $this->paginator->paginate(
+                $this->commentRepository->queryByAuthor($user),
+                $page,
+                CommentRepository::PAGINATOR_ITEMS_PER_PAGE
+            );
+        }
+
         return $this->paginator->paginate(
-            $this->commentRepository->queryByAuthor($user),
+            $this->commentRepository->queryAll(),
             $page,
             CommentRepository::PAGINATOR_ITEMS_PER_PAGE
         );

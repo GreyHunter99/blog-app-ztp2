@@ -142,28 +142,18 @@ class UserController extends AbstractController
             $mode = 'profile_author';
         }
 
-        $pagination_posts = $this->postService->createPaginatedList(
+        $pagination = $this->postService->createPaginatedList(
             $request->query->getInt('page', 1),
             $mode,
             $user,
             $filters
         );
 
-        $pagination_comments = null;
-        if($this->isGranted('MANAGE', $user)) {
-            $pagination_comments = $this->commentService->createPaginatedList(
-                $request->query->getInt('page', 1),
-                null,
-                $user
-            );
-        }
-
         return $this->render(
             'user/show.html.twig',
             [
                 'user' => $user,
-                'pagination_posts' => $pagination_posts,
-                'pagination_comments' => $pagination_comments,
+                'pagination' => $pagination,
                 'form' => $form->createView()
             ]
         );

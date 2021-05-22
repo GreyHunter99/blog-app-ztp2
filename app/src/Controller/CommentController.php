@@ -7,6 +7,7 @@ namespace App\Controller;
 
 use App\Entity\Comment;
 use App\Entity\Post;
+use App\Entity\User;
 use App\Form\CommentType;
 use App\Service\CommentService;
 use Doctrine\ORM\OptimisticLockException;
@@ -40,6 +41,53 @@ class CommentController extends AbstractController
     public function __construct(CommentService $commentService)
     {
         $this->commentService = $commentService;
+    }
+
+    /**
+     * Index action.
+     *
+     * @param Request   $request HTTP request
+     * @param User|null $user    User entity
+     *
+     * @return Response HTTP response
+     *
+     * @Route(
+     *     "/{id?}",
+     *     methods={"GET"},
+     *     requirements={"id": "[1-9]\d*"},
+     *     name="comment_index",
+     * )
+     *
+     * @IsGranted(
+     *     "IS_AUTHENTICATED_REMEMBERED",
+     * )
+     */
+    public function index(Request $request, ?User $user): Response
+    {
+        if ($user) {
+            if ($this->getUser() == $user or $this->isGranted('ROLE_ADMIN')) {
+                $page = $request->query->getInt('page', 1);
+                $pagination = $this->commentService->createPaginatedList($page, null, $user);
+
+                return $this->render(
+                    'comment/index.html.twig',
+                    [
+                        'pagination' => $pagination,
+                        'user' => $user->getEmail()
+                    ]
+                );
+            }
+        }
+        if ($this->isGranted('ROLE_ADMIN')) {
+            $page = $request->query->getInt('page', 1);
+            $pagination = $this->commentService->createPaginatedList($page, null, null);
+
+            return $this->render(
+                'comment/index.html.twig',
+                ['pagination' => $pagination]
+            );
+        }
+        return $this->redirectToRoute('post_index');
     }
 
     /**
