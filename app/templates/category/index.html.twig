@@ -6,9 +6,11 @@
 
 {% block body %}
     <h1>{{ 'title_category_list'|trans }}</h1>
-    <a class="btn btn-primary" role="button" href=" {{ url('category_create') }}"
-      title="{{ 'title_category_create'|trans }}">{{ 'title_category_create'|trans }}
-    </a>
+    {% if is_granted('ROLE_ADMIN') %}
+        <a class="btn btn-primary" role="button" href=" {{ url('category_create') }}"
+          title="{{ 'title_category_create'|trans }}">{{ 'title_category_create'|trans }}
+        </a>
+    {% endif %}
     {% if pagination is defined and pagination.items|length %}
         <div class="navigation text-center">
             {{ knp_pagination_render(pagination) }}
