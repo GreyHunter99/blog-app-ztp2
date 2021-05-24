@@ -51,23 +51,19 @@ class UserServiceTest extends KernelTestCase
     public function testSave(): void
     {
         // given
-        $expectedUser = $this->userRepository->findOneBy(array('email' => 'test@example.com'));
-        if (!$expectedUser) {
-            $passwordEncoder = self::$container->get('security.password_encoder');
-            $expectedUser = new User();
-            $expectedUser->setEmail('test@example.com');
-            $expectedUser->setRoles([User::ROLE_USER]);
-            $expectedUser->setPassword(
-                $passwordEncoder->encodePassword(
-                    $expectedUser,
-                    'p@55w0rd'
-                )
-            );
+        $passwordEncoder = self::$container->get('security.password_encoder');
+        $expectedUser = new User();
+        $expectedUser->setEmail('user@example.com');
+        $expectedUser->setRoles([User::ROLE_USER]);
+        $expectedUser->setPassword(
+            $passwordEncoder->encodePassword(
+                $expectedUser,
+                'p@55w0rd'
+            )
+        );
 
-            // when
-            $this->userService->save($expectedUser);
-        }
-
+        // when
+        $this->userService->save($expectedUser);
         $expectedUser = $this->userRepository->findOneById(
             $expectedUser->getId()
         );
@@ -88,7 +84,7 @@ class UserServiceTest extends KernelTestCase
 
         $counter = 0;
         while ($counter < $dataSetSize) {
-            $this->createUser('test'.$counter.'@example.com' ,[User::ROLE_USER]);
+            $this->createUser('testUser'.$counter.'@example.com' ,[User::ROLE_USER]);
 
             ++$counter;
         }
@@ -112,21 +108,18 @@ class UserServiceTest extends KernelTestCase
      */
     private function createUser(string $email, array $roles): User
     {
-        $user = $this->userRepository->findOneBy(array('email' => $email));
-        if (!$user) {
-            $passwordEncoder = self::$container->get('security.password_encoder');
-            $user = new User();
-            $user->setEmail($email);
-            $user->setRoles($roles);
-            $user->setPassword(
-                $passwordEncoder->encodePassword(
-                    $user,
-                    'p@55w0rd'
-                )
-            );
+        $passwordEncoder = self::$container->get('security.password_encoder');
+        $user = new User();
+        $user->setEmail($email);
+        $user->setRoles($roles);
+        $user->setPassword(
+            $passwordEncoder->encodePassword(
+                $user,
+                'p@55w0rd'
+            )
+        );
 
-            $this->userRepository->save($user);
-        }
+        $this->userRepository->save($user);
 
         return $user;
     }

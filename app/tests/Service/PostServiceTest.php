@@ -12,7 +12,6 @@ use App\Repository\PostRepository;
 use App\Repository\UserRepository;
 use App\Service\PostService;
 use App\Service\CategoryService;
-use App\Service\UserService;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -51,13 +50,6 @@ class PostServiceTest extends KernelTestCase
     private $testCategory;
 
     /**
-     * Test user.
-     *
-     * @var User
-     */
-    private $testUser;
-
-    /**
      * Set up test.
      */
     protected function setUp(): void
@@ -67,7 +59,6 @@ class PostServiceTest extends KernelTestCase
         $this->postRepository = $container->get(PostRepository::class);
         $this->postService = $container->get(PostService::class);
         $this->categoryService = $container->get(CategoryService::class);
-        $this->testUser = $this->createUser([User::ROLE_USER]);
         $this->testCategory = new Category();
         $this->testCategory->setName('Test Category');
         $this->categoryService->save($this->testCategory);
@@ -86,7 +77,7 @@ class PostServiceTest extends KernelTestCase
         $expectedPost->setTitle('Test Post');
         $expectedPost->setContent('Test Post Content');
         $expectedPost->setCategory($this->testCategory);
-        $expectedPost->setAuthor($this->testUser);
+        $expectedPost->setAuthor($this->createUser([User::ROLE_USER]));
 
         // when
         $this->postService->save($expectedPost);
@@ -111,7 +102,7 @@ class PostServiceTest extends KernelTestCase
         $expectedPost->setTitle('Test Post');
         $expectedPost->setContent('Test Post Content');
         $expectedPost->setCategory($this->testCategory);
-        $expectedPost->setAuthor($this->testUser);
+        $expectedPost->setAuthor($this->createUser([User::ROLE_USER]));
         $this->postRepository->save($expectedPost);
         $expectedId = $expectedPost->getId();
 
@@ -132,6 +123,7 @@ class PostServiceTest extends KernelTestCase
         $page = 1;
         $dataSetSize = 3;
         $expectedResultSize = 3;
+        $user = $this->createUser([User::ROLE_USER]);
 
         $counter = 0;
         while ($counter < $dataSetSize) {
@@ -140,7 +132,7 @@ class PostServiceTest extends KernelTestCase
             $post->setTitle('Test Post #'.$counter);
             $post->setContent('Test Post Content #'.$counter);
             $post->setCategory($this->testCategory);
-            $post->setAuthor($this->testUser);
+            $post->setAuthor($user);
             $post->setPublished(true);
 
             $this->postRepository->save($post);
@@ -151,8 +143,8 @@ class PostServiceTest extends KernelTestCase
         // when
         $result = $this->postService->createPaginatedList($page, 'main', null, ['category_id' => $this->testCategory->getId(), 'search' => 'Test']);
         $result_admin = $this->postService->createPaginatedList($page, 'main_admin', null);
-        $result_profile = $this->postService->createPaginatedList($page, 'profile', $this->testUser);
-        $result_author = $this->postService->createPaginatedList($page, 'profile_author', $this->testUser);
+        $result_profile = $this->postService->createPaginatedList($page, 'profile', $user);
+        $result_author = $this->postService->createPaginatedList($page, 'profile_author', $user);
 
         // then
         $this->assertEquals($expectedResultSize, $result->count());
@@ -172,24 +164,18 @@ class PostServiceTest extends KernelTestCase
      */
     private function createUser(array $roles): User
     {
-        $userService = self::$container->get(UserService::class);
+        $passwordEncoder = self::$container->get('security.password_encoder');
+        $user = new User();
+        $user->setEmail('user@example.com');
+        $user->setRoles($roles);
+        $user->setPassword(
+            $passwordEncoder->encodePassword(
+                $user,
+                'p@55w0rd'
+            )
+        );
         $userRepository = self::$container->get(UserRepository::class);
-
-        $user = $userRepository->findOneBy(array('email' => 'user@example.com'));
-        if (!$user) {
-            $passwordEncoder = self::$container->get('security.password_encoder');
-            $user = new User();
-            $user->setEmail('user@example.com');
-            $user->setRoles($roles);
-            $user->setPassword(
-                $passwordEncoder->encodePassword(
-                    $user,
-                    'p@55w0rd'
-                )
-            );
-
-            $userService->save($user);
-        }
+        $userRepository->save($user);
 
         return $user;
     }

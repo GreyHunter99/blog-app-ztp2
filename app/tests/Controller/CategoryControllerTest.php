@@ -79,7 +79,7 @@ class CategoryControllerTest extends WebTestCase
     public function testCreateRouteNonAuthorizedUser(): void
     {
         // given
-        $expectedStatusCode = 200;
+        $expectedStatusCode = 403;
         $user = $this->createUser([User::ROLE_USER]);
         $this->logIn($user);
 
@@ -115,7 +115,7 @@ class CategoryControllerTest extends WebTestCase
     public function testEditCategoryNonAuthorizedUser(): void
     {
         // given
-        $expectedStatusCode = 200;
+        $expectedStatusCode = 403;
         $user = $this->createUser([User::ROLE_USER]);
         $this->logIn($user);
 
@@ -163,7 +163,7 @@ class CategoryControllerTest extends WebTestCase
     public function testDeleteCategoryNonAuthorizedUser(): void
     {
         // given
-        $expectedStatusCode = 200;
+        $expectedStatusCode = 403;
         $user = $this->createUser([User::ROLE_USER]);
         $this->logIn($user);
 
@@ -234,24 +234,20 @@ class CategoryControllerTest extends WebTestCase
      */
     private function createUser(array $roles): User
     {
+        $passwordEncoder = self::$container->get('security.password_encoder');
+        $user = new User();
+        $user->setEmail('user@example.com');
+        $user->setRoles($roles);
+        $user->setPassword(
+            $passwordEncoder->encodePassword(
+                $user,
+                'p@55w0rd'
+            )
+        );
+
         $userRepository = self::$container->get(UserRepository::class);
+        $userRepository->save($user);
 
-        $user = $userRepository->findOneBy(array('email' => 'user@example.com'));
-
-        if (!$user) {
-            $passwordEncoder = self::$container->get('security.password_encoder');
-            $user = new User();
-            $user->setEmail('user@example.com');
-            $user->setRoles($roles);
-            $user->setPassword(
-                $passwordEncoder->encodePassword(
-                    $user,
-                    'p@55w0rd'
-                )
-            );
-
-            $userRepository->save($user);
-        }
         return $user;
     }
 }

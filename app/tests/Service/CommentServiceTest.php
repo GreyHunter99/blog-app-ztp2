@@ -176,23 +176,19 @@ class CommentServiceTest extends KernelTestCase
      */
     private function createUser(array $roles): User
     {
+        $passwordEncoder = self::$container->get('security.password_encoder');
+        $user = new User();
+        $user->setEmail('user@example.com');
+        $user->setRoles($roles);
+        $user->setPassword(
+            $passwordEncoder->encodePassword(
+                $user,
+                'p@55w0rd'
+            )
+        );
+
         $userRepository = self::$container->get(UserRepository::class);
-
-        $user = $userRepository->findOneBy(array('email' => 'user@example.com'));
-        if (!$user) {
-            $passwordEncoder = self::$container->get('security.password_encoder');
-            $user = new User();
-            $user->setEmail('user@example.com');
-            $user->setRoles($roles);
-            $user->setPassword(
-                $passwordEncoder->encodePassword(
-                    $user,
-                    'p@55w0rd'
-                )
-            );
-
-            $userRepository->save($user);
-        }
+        $userRepository->save($user);
 
         return $user;
     }
