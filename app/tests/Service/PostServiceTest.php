@@ -7,11 +7,13 @@ namespace App\Tests\Service;
 
 use App\Entity\Category;
 use App\Entity\Post;
+use App\Entity\Tag;
 use App\Entity\User;
 use App\Repository\PostRepository;
 use App\Repository\UserRepository;
-use App\Service\PostService;
 use App\Service\CategoryService;
+use App\Service\PostService;
+use App\Service\TagService;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -43,6 +45,13 @@ class PostServiceTest extends KernelTestCase
     private ?CategoryService $categoryService;
 
     /**
+     * Tag service.
+     *
+     * @var TagService|object|null
+     */
+    private ?TagService $tagService;
+
+    /**
      * Test category.
      *
      * @var Category
@@ -59,6 +68,7 @@ class PostServiceTest extends KernelTestCase
         $this->postRepository = $container->get(PostRepository::class);
         $this->postService = $container->get(PostService::class);
         $this->categoryService = $container->get(CategoryService::class);
+        $this->tagService = $container->get(TagService::class);
         $this->testCategory = new Category();
         $this->testCategory->setName('Test Category');
         $this->categoryService->save($this->testCategory);
@@ -124,6 +134,9 @@ class PostServiceTest extends KernelTestCase
         $dataSetSize = 3;
         $expectedResultSize = 3;
         $user = $this->createUser([User::ROLE_USER]);
+        $tag = new Tag();
+        $tag->setName('Test Tag');
+        $this->tagService->save($tag);
 
         $counter = 0;
         while ($counter < $dataSetSize) {
@@ -132,6 +145,7 @@ class PostServiceTest extends KernelTestCase
             $post->setTitle('Test Post #'.$counter);
             $post->setContent('Test Post Content #'.$counter);
             $post->setCategory($this->testCategory);
+            $post->addTag($tag);
             $post->setAuthor($user);
             $post->setPublished(true);
 
@@ -141,7 +155,7 @@ class PostServiceTest extends KernelTestCase
         }
 
         // when
-        $result = $this->postService->createPaginatedList($page, 'main', null, ['category_id' => $this->testCategory->getId(), 'search' => 'Test']);
+        $result = $this->postService->createPaginatedList($page, 'main', null, ['category_id' => $this->testCategory->getId(), 'tag_id' => $tag->getId(), 'search' => 'Test']);
         $result_admin = $this->postService->createPaginatedList($page, 'main_admin', null);
         $result_profile = $this->postService->createPaginatedList($page, 'profile', $user);
         $result_author = $this->postService->createPaginatedList($page, 'profile_author', $user);

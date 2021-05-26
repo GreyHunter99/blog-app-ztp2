@@ -11,5 +11,5 @@ if (file_exists(dirname(__DIR__).'/config/bootstrap.php')) {
 }
 
 passthru(
-    'bin/console --no-interaction doctrine:migrations:migrate'
+    'bin/console --no-interaction doctrine:migrations:migrate --env=test'
 );

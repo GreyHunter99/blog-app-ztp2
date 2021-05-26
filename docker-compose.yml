@@ -24,6 +24,18 @@ services:
             MYSQL_USER: sf
             MYSQL_PASSWORD: sf
 
+    mysql_test:
+        image: mysql
+        ports:
+          - 3317:3306
+        command: "--default-authentication-plugin=mysql_native_password"
+        container_name: sf_mysql_test
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: sf_test
+            MYSQL_USER: sf_test
+            MYSQL_PASSWORD: sf_test
+
     php:
         build: .docker/php
         container_name: sf_php
