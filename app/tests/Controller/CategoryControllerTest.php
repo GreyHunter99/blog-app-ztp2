@@ -6,8 +6,10 @@
 namespace App\Tests\Controller;
 
 use App\Entity\Category;
+use App\Entity\Post;
 use App\Entity\User;
 use App\Repository\CategoryRepository;
+use App\Repository\PostRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -24,7 +26,7 @@ class CategoryControllerTest extends WebTestCase
      *
      * @var KernelBrowser
      */
-    private KernelBrowser $httpClient;
+    private $httpClient;
 
     /**
      * Set up tests.
@@ -69,14 +71,12 @@ class CategoryControllerTest extends WebTestCase
 
         // then
         $this->assertEquals($expectedStatusCode, $result->getStatusCode());
-        $this->assertSelectorTextContains('html h1', '#'.$expectedCategory->getId());
-        // ... more assertions...
     }
 
     /**
-     * Test create route for non authorized user.
+     * Test create category for non authorized user.
      */
-    public function testCreateRouteNonAuthorizedUser(): void
+    public function testCreateCategoryNonAuthorizedUser(): void
     {
         // given
         $expectedStatusCode = 403;
@@ -92,9 +92,9 @@ class CategoryControllerTest extends WebTestCase
     }
 
     /**
-     * Test create route for admin user.
+     * Test create category for admin user.
      */
-    public function testCreateRouteAdminUser(): void
+    public function testCreateCategoryAdminUser(): void
     {
         // given
         $expectedStatusCode = 200;
@@ -102,11 +102,16 @@ class CategoryControllerTest extends WebTestCase
         $this->logIn($adminUser);
 
         // when
-        $this->httpClient->request('GET', '/category/');
+        $crawler = $this->httpClient->request('GET', '/category/create');
         $resultStatusCode = $this->httpClient->getResponse()->getStatusCode();
+        $form = $crawler->selectButton('Stwórz')->form();
+        $form['category[name]']->setValue('Test Category');
+        $this->httpClient->submit($form);
+        $this->httpClient->followRedirect();
 
         // then
         $this->assertEquals($expectedStatusCode, $resultStatusCode);
+        $this->assertStringContainsString('Stworzono pomyślnie.', $this->httpClient->getResponse()->getContent());
     }
 
     /**
@@ -126,11 +131,10 @@ class CategoryControllerTest extends WebTestCase
 
         // when
         $this->httpClient->request('GET', '/category/'.$expectedCategory->getId().'/edit');
-        $result = $this->httpClient->getResponse();
+        $resultStatusCode = $this->httpClient->getResponse()->getStatusCode();
 
         // then
-        $this->assertEquals($expectedStatusCode, $result->getStatusCode());
-        // ... more assertions...
+        $this->assertEquals($expectedStatusCode, $resultStatusCode);
     }
 
     /**
@@ -149,12 +153,15 @@ class CategoryControllerTest extends WebTestCase
         $categoryRepository->save($expectedCategory);
 
         // when
-        $this->httpClient->request('GET', '/category/'.$expectedCategory->getId().'/edit');
-        $result = $this->httpClient->getResponse();
+        $crawler = $this->httpClient->request('GET', '/category/'.$expectedCategory->getId().'/edit');
+        $resultStatusCode = $this->httpClient->getResponse()->getStatusCode();
+        $form = $crawler->selectButton('Zapisz')->form();
+        $this->httpClient->submit($form);
+        $this->httpClient->followRedirect();
 
         // then
-        $this->assertEquals($expectedStatusCode, $result->getStatusCode());
-        // ... more assertions...
+        $this->assertEquals($expectedStatusCode, $resultStatusCode);
+        $this->assertStringContainsString('Zaktualizowano pomyślnie.', $this->httpClient->getResponse()->getContent());
     }
 
     /**
@@ -174,11 +181,10 @@ class CategoryControllerTest extends WebTestCase
 
         // when
         $this->httpClient->request('GET', '/category/'.$expectedCategory->getId().'/delete');
-        $result = $this->httpClient->getResponse();
+        $resultStatusCode = $this->httpClient->getResponse()->getStatusCode();
 
         // then
-        $this->assertEquals($expectedStatusCode, $result->getStatusCode());
-        // ... more assertions...
+        $this->assertEquals($expectedStatusCode, $resultStatusCode);
     }
 
     /**
@@ -197,12 +203,47 @@ class CategoryControllerTest extends WebTestCase
         $categoryRepository->save($expectedCategory);
 
         // when
-        $this->httpClient->request('GET', '/category/'.$expectedCategory->getId().'/delete');
-        $result = $this->httpClient->getResponse();
+        $crawler = $this->httpClient->request('GET', '/category/'.$expectedCategory->getId().'/delete');
+        $resultStatusCode = $this->httpClient->getResponse()->getStatusCode();
+        $form = $crawler->selectButton('Usuń')->form();
+        $this->httpClient->submit($form);
+        $this->httpClient->followRedirect();
 
         // then
-        $this->assertEquals($expectedStatusCode, $result->getStatusCode());
-        // ... more assertions...
+        $this->assertEquals($expectedStatusCode, $resultStatusCode);
+        $this->assertStringContainsString('Usunięto pomyślnie.', $this->httpClient->getResponse()->getContent());
+    }
+
+    /**
+     * Test delete category with posts.
+     */
+    public function testDeleteCategoryWithPosts(): void
+    {
+        // given
+        $adminUser = $this->createUser([User::ROLE_USER, User::ROLE_ADMIN]);
+        $this->logIn($adminUser);
+
+        $expectedCategory = new Category();
+        $expectedCategory->setName('Test category');
+        $categoryRepository = self::$container->get(CategoryRepository::class);
+        $categoryRepository->save($expectedCategory);
+
+        $post = new Post();
+        $post->setTitle('Test Post');
+        $post->setContent('Test Post Content');
+        $post->setCategory($expectedCategory);
+        $post->setAuthor($adminUser);
+        $postRepository = self::$container->get(PostRepository::class);
+        $postRepository->save($post);
+
+        // when
+        $crawler = $this->httpClient->request('GET', '/category/'.$expectedCategory->getId().'/delete');
+        $form = $crawler->selectButton('Usuń')->form();
+        $this->httpClient->submit($form);
+        $this->httpClient->followRedirect();
+
+        // then
+        $this->assertStringContainsString('Kategoria zawiera posty.', $this->httpClient->getResponse()->getContent());
     }
 
     /**

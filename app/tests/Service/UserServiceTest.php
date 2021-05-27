@@ -22,14 +22,14 @@ class UserServiceTest extends KernelTestCase
      *
      * @var UserService|object|null
      */
-    private ?UserService $userService;
+    private $userService;
 
     /**
      * User repository.
      *
      * @var UserRepository|object|null
      */
-    private ?UserRepository $userRepository;
+    private $userRepository;
 
     /**
      * Set up test.
@@ -51,16 +51,7 @@ class UserServiceTest extends KernelTestCase
     public function testSave(): void
     {
         // given
-        $passwordEncoder = self::$container->get('security.password_encoder');
-        $expectedUser = new User();
-        $expectedUser->setEmail('user@example.com');
-        $expectedUser->setRoles([User::ROLE_USER]);
-        $expectedUser->setPassword(
-            $passwordEncoder->encodePassword(
-                $expectedUser,
-                'p@55w0rd'
-            )
-        );
+        $expectedUser = $this->createUser('user@example.com' ,[User::ROLE_USER]);
 
         // when
         $this->userService->save($expectedUser);
@@ -79,12 +70,32 @@ class UserServiceTest extends KernelTestCase
     {
         // given
         $page = 1;
+        $expectedResultSize = 0;
+
+        // when
+        $result = $this->userService->createPaginatedList($page);
+
+        // then
+        $this->assertEquals($expectedResultSize, $result->count());
+    }
+
+    /**
+     * Test pagination list.
+     *
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function testCreatePaginatedList(): void
+    {
+        // given
+        $page = 1;
         $dataSetSize = 3;
         $expectedResultSize = 3;
 
         $counter = 0;
         while ($counter < $dataSetSize) {
-            $this->createUser('testUser'.$counter.'@example.com' ,[User::ROLE_USER]);
+            $user = $this->createUser('testUser'.$counter.'@example.com' ,[User::ROLE_USER]);
+            $this->userRepository->save($user);
 
             ++$counter;
         }
@@ -96,7 +107,41 @@ class UserServiceTest extends KernelTestCase
         $this->assertEquals($expectedResultSize, $result->count());
     }
 
-    // other tests for paginated list
+    /**
+     * Test number of admins.
+     *
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function testNumberOfAdmins(): void
+    {
+        // given
+        $dataSetSize = 2;
+        $expectedResultSize = 2;
+
+        $counter = 0;
+        while ($counter < $dataSetSize) {
+            $user = $this->createUser('user'.$counter.'@example.com' ,[User::ROLE_USER]);
+            $this->userRepository->save($user);
+
+            ++$counter;
+        }
+
+        $counter = 0;
+        while ($counter < $dataSetSize) {
+            $user = $this->createUser('admin'.$counter.'@example.com' ,[User::ROLE_USER, User::ROLE_ADMIN]);
+            $this->userRepository->save($user);
+
+            ++$counter;
+        }
+
+
+        // when
+        $result = $this->userService->numberOfAdmins();
+
+        // then
+        $this->assertEquals($expectedResultSize, $result);
+    }
 
     /**
      * Create user.
@@ -118,8 +163,6 @@ class UserServiceTest extends KernelTestCase
                 'p@55w0rd'
             )
         );
-
-        $this->userRepository->save($user);
 
         return $user;
     }

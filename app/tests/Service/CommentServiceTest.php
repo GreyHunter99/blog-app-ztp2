@@ -28,42 +28,28 @@ class CommentServiceTest extends KernelTestCase
      *
      * @var CommentRepository|object|null
      */
-    private ?CommentRepository $commentRepository;
+    private $commentRepository;
 
     /**
      * Comment service.
      *
      * @var CommentService|object|null
      */
-    private ?CommentService $commentService;
+    private $commentService;
 
     /**
      * Post service.
      *
      * @var PostService|object|null
      */
-    private ?PostService $postService;
+    private $postService;
 
     /**
      * Category service.
      *
      * @var CategoryService|object|null
      */
-    private ?CategoryService $categoryService;
-
-    /**
-     * Test post.
-     *
-     * @var Post
-     */
-    private $testPost;
-
-    /**
-     * Test user.
-     *
-     * @var User
-     */
-    private $testUser;
+    private $categoryService;
 
     /**
      * Set up test.
@@ -74,10 +60,8 @@ class CommentServiceTest extends KernelTestCase
         $container = self::$container;
         $this->commentRepository = $container->get(CommentRepository::class);
         $this->commentService = $container->get(CommentService::class);
-        $this->postService = $container->get(postService::class);
+        $this->postService = $container->get(PostService::class);
         $this->categoryService = $container->get(CategoryService::class);
-        $this->testUser = $this->createUser([User::ROLE_USER]);
-        $this->testPost = $this->createPost();
     }
 
     /**
@@ -89,11 +73,8 @@ class CommentServiceTest extends KernelTestCase
     public function testSave(): void
     {
         // given
-        $expectedComment = new Comment();
-        $expectedComment->setTitle('Test Comment');
-        $expectedComment->setContent('Test Comment Content');
-        $expectedComment->setPost($this->testPost);
-        $expectedComment->setAuthor($this->testUser);
+        $user = $this->createUser('user@example.com');
+        $expectedComment = $this->createComment('Test Comment', $this->createPost($user), $user);
 
         // when
         $this->commentService->save($expectedComment);
@@ -114,11 +95,8 @@ class CommentServiceTest extends KernelTestCase
     public function testDelete(): void
     {
         // given
-        $expectedComment = new Comment();
-        $expectedComment->setTitle('Test Comment');
-        $expectedComment->setContent('Test Comment Content');
-        $expectedComment->setPost($this->testPost);
-        $expectedComment->setAuthor($this->testUser);
+        $user = $this->createUser('user@example.com');
+        $expectedComment = $this->createComment('Test Comment', $this->createPost($user), $user);
         $this->commentRepository->save($expectedComment);
         $expectedId = $expectedComment->getId();
 
@@ -137,49 +115,139 @@ class CommentServiceTest extends KernelTestCase
     {
         // given
         $page = 1;
-        $dataSetSize = 3;
-        $expectedResultSize = 3;
-
-        $counter = 0;
-        while ($counter < $dataSetSize) {
-
-            $comment = new Comment();
-            $comment->setTitle('Test Comment #'.$counter);
-            $comment->setContent('Test Comment Content #'.$counter);
-            $comment->setPost($this->testPost);
-            $comment->setAuthor($this->testUser);
-
-            $this->commentRepository->save($comment);
-
-            ++$counter;
-        }
+        $expectedResultSize = 0;
 
         // when
         $result = $this->commentService->createPaginatedList($page, null, null);
-        $result_post = $this->commentService->createPaginatedList($page, $this->testPost, null);
-        $result_user = $this->commentService->createPaginatedList($page, null, $this->testUser);
 
         // then
         $this->assertEquals($expectedResultSize, $result->count());
-        $this->assertEquals($expectedResultSize, $result_post->count());
-        $this->assertEquals($expectedResultSize, $result_user->count());
     }
 
-    // other tests for paginated list
+    /**
+     * Test pagination list admin index page.
+     *
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function testCreatePaginatedListAdminIndex(): void
+    {
+        // given
+        $page = 2;
+        $expectedResultSize = 1;
+
+        $user1 = $this->createUser('user1@example.com');
+        $user2 = $this->createUser('user2@example.com');
+
+        $post1 = $this->createPost($user1);
+        $post2 = $this->createPost($user2);
+
+        $comment = $this->createComment('Test Comment #1', $post1, $user1);
+        $this->commentRepository->save($comment);
+
+        $comment = $this->createComment('Test Comment #2', $post1, $user2);
+        $this->commentRepository->save($comment);
+
+        $comment = $this->createComment('Test Comment #3', $post2, $user1);
+        $this->commentRepository->save($comment);
+
+        $comment = $this->createComment('Test Comment #4', $post2, $user2);
+        $this->commentRepository->save($comment);
+
+        // when
+        $result = $this->commentService->createPaginatedList($page, null, null);
+
+        // then
+        $this->assertEquals($expectedResultSize, $result->count());
+    }
+
+    /**
+     * Test pagination list by post.
+     *
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function testCreatePaginatedListPost(): void
+    {
+        // given
+        $page = 1;
+        $expectedResultSize = 2;
+
+        $user1 = $this->createUser('user1@example.com');
+        $user2 = $this->createUser('user2@example.com');
+
+        $post1 = $this->createPost($user1);
+        $post2 = $this->createPost($user2);
+
+        $comment = $this->createComment('Test Comment #1', $post1, $user1);
+        $this->commentRepository->save($comment);
+
+        $comment = $this->createComment('Test Comment #2', $post1, $user2);
+        $this->commentRepository->save($comment);
+
+        $comment = $this->createComment('Test Comment #3', $post2, $user1);
+        $this->commentRepository->save($comment);
+
+        $comment = $this->createComment('Test Comment #4', $post2, $user2);
+        $this->commentRepository->save($comment);
+
+        // when
+        $result = $this->commentService->createPaginatedList($page, $post1, null);
+
+        // then
+        $this->assertEquals($expectedResultSize, $result->count());
+    }
+
+    /**
+     * Test pagination list by comment author.
+     *
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function testCreatePaginatedListAuthor(): void
+    {
+        // given
+        $page = 1;
+        $expectedResultSize = 2;
+
+        $user1 = $this->createUser('user1@example.com');
+        $user2 = $this->createUser('user2@example.com');
+
+        $post1 = $this->createPost($user1);
+        $post2 = $this->createPost($user2);
+
+        $comment = $this->createComment('Test Comment #1', $post1, $user1);
+        $this->commentRepository->save($comment);
+
+        $comment = $this->createComment('Test Comment #2', $post1, $user2);
+        $this->commentRepository->save($comment);
+
+        $comment = $this->createComment('Test Comment #3', $post2, $user1);
+        $this->commentRepository->save($comment);
+
+        $comment = $this->createComment('Test Comment #4', $post2, $user2);
+        $this->commentRepository->save($comment);
+
+        // when
+        $result = $this->commentService->createPaginatedList($page, null, $user1);
+
+        // then
+        $this->assertEquals($expectedResultSize, $result->count());
+    }
 
     /**
      * Create user.
      *
-     * @param array $roles User roles
+     * @param string $email User email
      *
      * @return User User entity
      */
-    private function createUser(array $roles): User
+    private function createUser(string $email): User
     {
         $passwordEncoder = self::$container->get('security.password_encoder');
         $user = new User();
-        $user->setEmail('user@example.com');
-        $user->setRoles($roles);
+        $user->setEmail($email);
+        $user->setRoles([User::ROLE_USER]);
         $user->setPassword(
             $passwordEncoder->encodePassword(
                 $user,
@@ -196,9 +264,14 @@ class CommentServiceTest extends KernelTestCase
     /**
      * Create post.
      *
+     * @param User $user User entity
+     *
+     * @throws ORMException
+     * @throws OptimisticLockException
+     *
      * @return Post Post entity
      */
-    private function createPost(): Post
+    private function createPost(User $user): Post
     {
         $category = new Category();
         $category->setName('Test Category');
@@ -208,9 +281,29 @@ class CommentServiceTest extends KernelTestCase
         $post->setTitle('Test Post');
         $post->setContent('Test Post Content');
         $post->setCategory($category);
-        $post->setAuthor($this->testUser);
+        $post->setAuthor($user);
         $this->postService->save($post);
 
         return $post;
+    }
+
+    /**
+     * Create comment.
+     *
+     * @param string $title Comment title
+     * @param Post   $post  Post entity
+     * @param User   $user  User entity
+     *
+     * @return Comment Comment entity
+     */
+    private function createComment(string $title, Post $post, User $user): Comment
+    {
+        $comment = new Comment();
+        $comment->setTitle($title);
+        $comment->setContent('Test Comment Content');
+        $comment->setPost($post);
+        $comment->setAuthor($user);
+
+        return $comment;
     }
 }

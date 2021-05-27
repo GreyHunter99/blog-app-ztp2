@@ -28,35 +28,28 @@ class PostServiceTest extends KernelTestCase
      *
      * @var PostRepository|object|null
      */
-    private ?PostRepository $postRepository;
+    private $postRepository;
 
     /**
      * Post service.
      *
      * @var PostService|object|null
      */
-    private ?PostService $postService;
+    private $postService;
 
     /**
      * Category service.
      *
      * @var CategoryService|object|null
      */
-    private ?CategoryService $categoryService;
+    private $categoryService;
 
     /**
      * Tag service.
      *
      * @var TagService|object|null
      */
-    private ?TagService $tagService;
-
-    /**
-     * Test category.
-     *
-     * @var Category
-     */
-    private $testCategory;
+    private $tagService;
 
     /**
      * Set up test.
@@ -69,9 +62,6 @@ class PostServiceTest extends KernelTestCase
         $this->postService = $container->get(PostService::class);
         $this->categoryService = $container->get(CategoryService::class);
         $this->tagService = $container->get(TagService::class);
-        $this->testCategory = new Category();
-        $this->testCategory->setName('Test Category');
-        $this->categoryService->save($this->testCategory);
     }
 
     /**
@@ -83,11 +73,7 @@ class PostServiceTest extends KernelTestCase
     public function testSave(): void
     {
         // given
-        $expectedPost = new Post();
-        $expectedPost->setTitle('Test Post');
-        $expectedPost->setContent('Test Post Content');
-        $expectedPost->setCategory($this->testCategory);
-        $expectedPost->setAuthor($this->createUser([User::ROLE_USER]));
+        $expectedPost = $this->createPost('Test Post', 'Test category', 'Test Tag', true, $this->createUser('user@example.com'));
 
         // when
         $this->postService->save($expectedPost);
@@ -108,11 +94,7 @@ class PostServiceTest extends KernelTestCase
     public function testDelete(): void
     {
         // given
-        $expectedPost = new Post();
-        $expectedPost->setTitle('Test Post');
-        $expectedPost->setContent('Test Post Content');
-        $expectedPost->setCategory($this->testCategory);
-        $expectedPost->setAuthor($this->createUser([User::ROLE_USER]));
+        $expectedPost = $this->createPost('Test Post', 'Test category', 'Test Tag', true, $this->createUser('user@example.com'));
         $this->postRepository->save($expectedPost);
         $expectedId = $expectedPost->getId();
 
@@ -131,57 +113,245 @@ class PostServiceTest extends KernelTestCase
     {
         // given
         $page = 1;
-        $dataSetSize = 3;
-        $expectedResultSize = 3;
-        $user = $this->createUser([User::ROLE_USER]);
-        $tag = new Tag();
-        $tag->setName('Test Tag');
-        $this->tagService->save($tag);
-
-        $counter = 0;
-        while ($counter < $dataSetSize) {
-
-            $post = new Post();
-            $post->setTitle('Test Post #'.$counter);
-            $post->setContent('Test Post Content #'.$counter);
-            $post->setCategory($this->testCategory);
-            $post->addTag($tag);
-            $post->setAuthor($user);
-            $post->setPublished(true);
-
-            $this->postRepository->save($post);
-
-            ++$counter;
-        }
+        $expectedResultSize = 0;
 
         // when
-        $result = $this->postService->createPaginatedList($page, 'main', null, ['category_id' => $this->testCategory->getId(), 'tag_id' => $tag->getId(), 'search' => 'Test']);
-        $result_admin = $this->postService->createPaginatedList($page, 'main_admin', null);
-        $result_profile = $this->postService->createPaginatedList($page, 'profile', $user);
-        $result_author = $this->postService->createPaginatedList($page, 'profile_author', $user);
+        $result = $this->postService->createPaginatedList($page, 'main', null);
 
         // then
         $this->assertEquals($expectedResultSize, $result->count());
-        $this->assertEquals($expectedResultSize, $result_admin->count());
-        $this->assertEquals($expectedResultSize, $result_profile->count());
-        $this->assertEquals($expectedResultSize, $result_author->count());
     }
 
-    // other tests for paginated list
+    /**
+     * Test pagination list main page.
+     *
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function testCreatePaginatedListMain(): void
+    {
+        // given
+        $page = 1;
+        $dataSetSize = 2;
+        $expectedResultSize = 2;
+
+        $user = $this->createUser('user@example.com');
+
+        $counter = 0;
+        while ($counter < $dataSetSize) {
+            $post = $this->createPost('Test Post #'.$counter, 'Test category', 'Test Tag', true, $user);
+            $this->postRepository->save($post);
+            ++$counter;
+        }
+        $post = $this->createPost('Test Post #'.$counter, 'Test category', 'Test Tag', false, $user);
+        $this->postRepository->save($post);
+
+        // when
+        $result = $this->postService->createPaginatedList($page, 'main', null);
+
+        // then
+        $this->assertEquals($expectedResultSize, $result->count());
+    }
+
+    /**
+     * Test pagination list main page as admin.
+     *
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function testCreatePaginatedListMainAdmin(): void
+    {
+        // given
+        $page = 1;
+        $dataSetSize = 2;
+        $expectedResultSize = 3;
+
+        $user = $this->createUser('user@example.com');
+
+        $counter = 0;
+        while ($counter < $dataSetSize) {
+            $post = $this->createPost('Test Post #'.$counter, 'Test category', 'Test Tag', true, $user);
+            $this->postRepository->save($post);
+            ++$counter;
+        }
+        $post = $this->createPost('Test Post #'.$counter, 'Test category', 'Test Tag', false, $user);
+        $this->postRepository->save($post);
+
+        // when
+        $result = $this->postService->createPaginatedList($page, 'main_admin', null);
+
+        // then
+        $this->assertEquals($expectedResultSize, $result->count());
+    }
+
+    /**
+     * Test pagination list user profile.
+     *
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function testCreatePaginatedListProfile(): void
+    {
+        // given
+        $page = 1;
+        $expectedResultSize = 1;
+
+        $user1 = $this->createUser('user1@example.com');
+        $user2 = $this->createUser('user2@example.com');
+
+        $post = $this->createPost('Test Post #1', 'Test category', 'Test Tag', true, $user1);
+        $this->postRepository->save($post);
+
+        $post = $this->createPost('Test Post #2', 'Test category', 'Test Tag', false, $user1);
+        $this->postRepository->save($post);
+
+        $post = $this->createPost('Test Post #3', 'Test category', 'Test Tag', true, $user2);
+        $this->postRepository->save($post);
+
+        // when
+        $result = $this->postService->createPaginatedList($page, 'profile', $user1);
+
+        // then
+        $this->assertEquals($expectedResultSize, $result->count());
+    }
+
+    /**
+     * Test pagination list user profile as profile owner.
+     *
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function testCreatePaginatedListProfileAuthor(): void
+    {
+        // given
+        $page = 1;
+        $expectedResultSize = 2;
+
+        $user1 = $this->createUser('user1@example.com');
+        $user2 = $this->createUser('user2@example.com');
+
+        $post = $this->createPost('Test Post #1', 'Test category', 'Test Tag', true, $user1);
+        $this->postRepository->save($post);
+
+        $post = $this->createPost('Test Post #2', 'Test category', 'Test Tag', false, $user1);
+        $this->postRepository->save($post);
+
+        $post = $this->createPost('Test Post #3', 'Test category', 'Test Tag', true, $user2);
+        $this->postRepository->save($post);
+
+        // when
+        $result = $this->postService->createPaginatedList($page, 'profile_author', $user1);
+
+        // then
+        $this->assertEquals($expectedResultSize, $result->count());
+    }
+
+    /**
+     * Test pagination list with category filter.
+     *
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function testCreatePaginatedListCategory(): void
+    {
+        // given
+        $page = 1;
+        $dataSetSize = 2;
+        $expectedResultSize = 1;
+
+        $user = $this->createUser('user@example.com');
+
+        $counter = 0;
+        while ($counter < $dataSetSize) {
+            $post = $this->createPost('Test Post #'.$counter, 'Test category 1', 'Test Tag', true, $user);
+            $this->postRepository->save($post);
+            ++$counter;
+        }
+        $post = $this->createPost('Test Post #'.$counter, 'Test category 2', 'Test Tag', true, $user);
+        $this->postRepository->save($post);
+
+        // when
+        $result = $this->postService->createPaginatedList($page, 'main', null, ['category_id' => $post->getCategory()->getId()]);
+
+        // then
+        $this->assertEquals($expectedResultSize, $result->count());
+    }
+
+    /**
+     * Test pagination list with tag filter.
+     *
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function testCreatePaginatedListTag(): void
+    {
+        // given
+        $page = 1;
+        $dataSetSize = 2;
+        $expectedResultSize = 1;
+
+        $user = $this->createUser('user@example.com');
+
+        $counter = 0;
+        while ($counter < $dataSetSize) {
+            $post = $this->createPost('Test Post #'.$counter, 'Test category', 'Test Tag 1', true, $user);
+            $this->postRepository->save($post);
+            ++$counter;
+        }
+        $post = $this->createPost('Test Post #'.$counter, 'Test category', 'Test Tag 2', true, $user);
+        $this->postRepository->save($post);
+
+        // when
+        $result = $this->postService->createPaginatedList($page, 'main', null, ['tag_id' => $post->getTags()[0]->getId()]);
+
+        // then
+        $this->assertEquals($expectedResultSize, $result->count());
+    }
+
+    /**
+     * Test pagination list with search filter.
+     *
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function testCreatePaginatedListSearch(): void
+    {
+        // given
+        $page = 1;
+        $dataSetSize = 2;
+        $expectedResultSize = 2;
+
+        $user = $this->createUser('user@example.com');
+
+        $counter = 0;
+        while ($counter < $dataSetSize) {
+            $post = $this->createPost('Test Post #'.$counter.' decoy', 'Test category', 'Test Tag', true, $user);
+            $this->postRepository->save($post);
+            ++$counter;
+        }
+        $post = $this->createPost('Test Post #'.$counter, 'Test category', 'Test Tag', true, $user);
+        $this->postRepository->save($post);
+
+        // when
+        $result = $this->postService->createPaginatedList($page, 'main', null, ['search' => 'decoy']);
+
+        // then
+        $this->assertEquals($expectedResultSize, $result->count());
+    }
 
     /**
      * Create user.
      *
-     * @param array $roles User roles
+     * @param string $email User email
      *
      * @return User User entity
      */
-    private function createUser(array $roles): User
+    private function createUser(string $email): User
     {
         $passwordEncoder = self::$container->get('security.password_encoder');
         $user = new User();
-        $user->setEmail('user@example.com');
-        $user->setRoles($roles);
+        $user->setEmail($email);
+        $user->setRoles([User::ROLE_USER]);
         $user->setPassword(
             $passwordEncoder->encodePassword(
                 $user,
@@ -192,5 +362,40 @@ class PostServiceTest extends KernelTestCase
         $userRepository->save($user);
 
         return $user;
+    }
+
+    /**
+     * Create post.
+     *
+     * @param string $title        Post title
+     * @param string $categoryName Post category name
+     * @param string $tagName      Post tag name
+     * @param bool   $published    Post published
+     * @param User   $user         User entity
+     *
+     * @throws ORMException
+     * @throws OptimisticLockException
+     *
+     * @return Post Post entity
+     */
+    private function createPost(string $title, string $categoryName, string $tagName, bool $published, User $user): Post
+    {
+        $category = new Category();
+        $category->setName($categoryName);
+        $this->categoryService->save($category);
+
+        $tag = new Tag();
+        $tag->setName($tagName);
+        $this->tagService->save($tag);
+
+        $post = new Post();
+        $post->setTitle($title);
+        $post->setContent('Test Post Content');
+        $post->setCategory($category);
+        $post->addTag($tag);
+        $post->setAuthor($user);
+        $post->setPublished($published);
+
+        return $post;
     }
 }

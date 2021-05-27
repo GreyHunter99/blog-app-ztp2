@@ -22,14 +22,14 @@ class CategoryServiceTest extends KernelTestCase
      *
      * @var CategoryService|object|null
      */
-    private ?CategoryService $categoryService;
+    private $categoryService;
 
     /**
      * Category repository.
      *
      * @var CategoryRepository|object|null
      */
-    private ?CategoryRepository $categoryRepository;
+    private $categoryRepository;
 
     /**
      * Set up test.
@@ -113,6 +113,25 @@ class CategoryServiceTest extends KernelTestCase
     {
         // given
         $page = 1;
+        $expectedResultSize = 0;
+
+        // when
+        $result = $this->categoryService->createPaginatedList($page);
+
+        // then
+        $this->assertEquals($expectedResultSize, $result->count());
+    }
+
+    /**
+     * Test pagination list.
+     *
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function testCreatePaginatedList(): void
+    {
+        // given
+        $page = 1;
         $dataSetSize = 3;
         $expectedResultSize = 3;
 
@@ -131,6 +150,4 @@ class CategoryServiceTest extends KernelTestCase
         // then
         $this->assertEquals($expectedResultSize, $result->count());
     }
-
-    // other tests for paginated list
 }
