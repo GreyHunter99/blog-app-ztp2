@@ -73,17 +73,6 @@ class PhotoRepository extends ServiceEntityRepository
     }
 
     /**
-     * Query all records.
-     *
-     * @return QueryBuilder Query builder
-     */
-    public function queryAll(): QueryBuilder
-    {
-        return $this->getOrCreateQueryBuilder()
-            ->orderBy('photo.id', 'DESC');
-    }
-
-    /**
      * Query all comments for specific post.
      *
      * @param Post $post Post entity

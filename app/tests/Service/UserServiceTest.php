@@ -55,12 +55,12 @@ class UserServiceTest extends KernelTestCase
 
         // when
         $this->userService->save($expectedUser);
-        $expectedUser = $this->userRepository->findOneById(
+        $resultUser = $this->userRepository->findOneById(
             $expectedUser->getId()
         );
 
         // then
-        $this->assertEquals($expectedUser, $expectedUser);
+        $this->assertEquals($expectedUser, $resultUser);
     }
 
     /**

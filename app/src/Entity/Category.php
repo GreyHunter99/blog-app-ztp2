@@ -73,6 +73,7 @@ class Category
      * @Assert\Type(type="string")
      * @Assert\NotBlank
      * @Assert\Length(
+     *     allowEmptyString=false,
      *     min="3",
      *     max="32",
      * )
@@ -91,6 +92,7 @@ class Category
      *
      * @Assert\Type(type="string")
      * @Assert\Length(
+     *     allowEmptyString=false,
      *     min="3",
      *     max="32",
      * )

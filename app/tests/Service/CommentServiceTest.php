@@ -78,12 +78,12 @@ class CommentServiceTest extends KernelTestCase
 
         // when
         $this->commentService->save($expectedComment);
-        $expectedComment = $this->commentRepository->findOneById(
+        $resultComment = $this->commentRepository->findOneById(
             $expectedComment->getId()
         );
 
         // then
-        $this->assertEquals($expectedComment, $expectedComment);
+        $this->assertEquals($expectedComment, $resultComment);
     }
 
     /**

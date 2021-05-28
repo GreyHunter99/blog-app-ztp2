@@ -43,7 +43,7 @@ class Photo
     /**
      * Post.
      *
-     * @var \App\Entity\Post
+     * @var Post
      *
      * @ORM\ManyToOne(
      *     targetEntity="App\Entity\Post",
@@ -82,7 +82,7 @@ class Photo
     /**
      * Getter for post.
      *
-     * @return \App\Entity\Post|null Post
+     * @return Post|null Post
      */
     public function getPost(): ?Post
     {
@@ -92,9 +92,9 @@ class Photo
     /**
      * Setter for post.
      *
-     * @param \App\Entity\Post $post Post
+     * @param Post $post Post
      */
-    public function setPost(?Post $post): void
+    public function setPost(Post $post): void
     {
         $this->post = $post;
     }

@@ -1,14 +1,16 @@
 <?php
 /**
- * Post controller tests.
+ * Comment controller tests.
  */
 
 namespace App\Tests\Controller;
 
 use App\Entity\Category;
+use App\Entity\Comment;
 use App\Entity\Post;
 use App\Entity\User;
 use App\Repository\CategoryRepository;
+use App\Repository\CommentRepository;
 use App\Repository\PostRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -17,9 +19,9 @@ use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 /**
- * Class PostControllerTest.
+ * Class CommentControllerTest.
  */
-class PostControllerTest extends WebTestCase
+class CommentControllerTest extends WebTestCase
 {
     /**
      * Test client.
@@ -37,19 +39,36 @@ class PostControllerTest extends WebTestCase
     }
 
     /**
-     * Test index route search.
+     * Test index route as non authorized user.
      */
-    public function testIndexRouteSearch(): void
+    public function testIndexRouteNonAuthorizedUser(): void
+    {
+        // given
+        $expectedStatusCode = 302;
+        $user = $this->createUser('user@example.com', [User::ROLE_USER]);
+        $this->logIn($user);
+
+        // when
+        $this->httpClient->request('GET', '/comment');
+        $resultStatusCode = $this->httpClient->getResponse()->getStatusCode();
+
+        // then
+        $this->assertEquals($expectedStatusCode, $resultStatusCode);
+    }
+
+    /**
+     * Test index route as authorized user.
+     */
+    public function testIndexRouteAuthorizedUser(): void
     {
         // given
         $expectedStatusCode = 200;
+        $user = $this->createUser('user@example.com', [User::ROLE_USER]);
+        $this->logIn($user);
 
         // when
-        $crawler = $this->httpClient->request('GET', '/');
+        $this->httpClient->request('GET', '/comment/'.$user->getId());
         $resultStatusCode = $this->httpClient->getResponse()->getStatusCode();
-        $form = $crawler->filter('form')->form();
-        $form['search']->setValue('query');
-        $this->httpClient->submit($form);
 
         // then
         $this->assertEquals($expectedStatusCode, $resultStatusCode);
@@ -62,11 +81,11 @@ class PostControllerTest extends WebTestCase
     {
         // given
         $expectedStatusCode = 200;
-        $adminUser = $this->createUser('user@example.com', [User::ROLE_USER, User::ROLE_ADMIN], false);
+        $adminUser = $this->createUser('user@example.com', [User::ROLE_USER, User::ROLE_ADMIN]);
         $this->logIn($adminUser);
 
         // when
-        $this->httpClient->request('GET', '/');
+        $this->httpClient->request('GET', '/comment');
         $resultStatusCode = $this->httpClient->getResponse()->getStatusCode();
 
         // then
@@ -74,69 +93,18 @@ class PostControllerTest extends WebTestCase
     }
 
     /**
-     * Test show post.
+     * Test create comment for anonymous user.
      */
-    public function testShowPost(): void
-    {
-        // given
-        $expectedStatusCode = 200;
-        $user = $this->createUser('user@example.com', [User::ROLE_USER], false);
-        $expectedPost = $this->createPost($user, true);
-
-        // when
-        $this->httpClient->request('GET', '/'.$expectedPost->getId());
-        $result = $this->httpClient->getResponse()->getStatusCode();
-
-        // then
-        $this->assertEquals($expectedStatusCode, $result);
-    }
-
-    /**
-     * Test show post not published.
-     */
-    public function testShowPostNotPublished(): void
+    public function testCreateCommentAnonymousUser(): void
     {
         // given
         $expectedStatusCode = 302;
-        $user = $this->createUser('user@example.com', [User::ROLE_USER], false);
-        $expectedPost = $this->createPost($user, false);
+        $user = $this->createUser('user@example.com', [User::ROLE_USER]);
+
+        $post = $this->createPost($user);
 
         // when
-        $this->httpClient->request('GET', '/'.$expectedPost->getId());
-        $result = $this->httpClient->getResponse()->getStatusCode();
-
-        // then
-        $this->assertEquals($expectedStatusCode, $result);
-    }
-
-    /**
-     * Test show post blocked user.
-     */
-    public function testShowPostBlockedUser(): void
-    {
-        // given
-        $expectedStatusCode = 302;
-        $user = $this->createUser('user@example.com', [User::ROLE_USER], true);
-        $expectedPost = $this->createPost($user, true);
-
-        // when
-        $this->httpClient->request('GET', '/'.$expectedPost->getId());
-        $result = $this->httpClient->getResponse()->getStatusCode();
-
-        // then
-        $this->assertEquals($expectedStatusCode, $result);
-    }
-
-    /**
-     * Test create post for anonymous user.
-     */
-    public function testCreatePostAnonymousUser(): void
-    {
-        // given
-        $expectedStatusCode = 302;
-
-        // when
-        $this->httpClient->request('GET', '/create');
+        $this->httpClient->request('GET', '/comment/'.$post->getId().'/create');
         $resultStatusCode = $this->httpClient->getResponse()->getStatusCode();
 
         // then
@@ -144,30 +112,24 @@ class PostControllerTest extends WebTestCase
     }
 
     /**
-     * Test create post for authorized user.
+     * Test create comment for authorized user.
      */
-    public function testCreatePostAuthorizedUser(): void
+    public function testCreateCommentAuthorizedUser(): void
     {
         // given
         $expectedStatusCode = 200;
-        $user = $this->createUser('user@example.com', [User::ROLE_USER], false);
+        $user = $this->createUser('user@example.com', [User::ROLE_USER]);
         $this->logIn($user);
 
-        $category = new Category();
-        $category->setName('Test Category');
-        $categoryRepository = self::$container->get(CategoryRepository::class);
-        $categoryRepository->save($category);
+        $post = $this->createPost($user);
 
         // when
-        $crawler = $this->httpClient->request('GET', '/create');
+        $crawler = $this->httpClient->request('GET', '/comment/'.$post->getId().'/create');
         $resultStatusCode = $this->httpClient->getResponse()->getStatusCode();
 
         $form = $crawler->selectButton('Stwórz')->form();
-        $form['post[title]']->setValue('Test Post');
-        $form['post[content]']->setValue('Test Post Content');
-        $form['post[category]']->select($category->getId());
-        $form['post[tags]']->setValue('Test Tag 1, Test Tag 2');
-        $form['post[published]']->tick();
+        $form['comment[title]']->setValue('Test Comment');
+        $form['comment[content]']->setValue('Test Comment Content');
         $this->httpClient->submit($form);
         $this->httpClient->followRedirect();
 
@@ -177,20 +139,22 @@ class PostControllerTest extends WebTestCase
     }
 
     /**
-     * Test edit post for non authorized user.
+     * Test edit comment for non authorized user.
      */
-    public function testEditPostNonAuthorizedUser(): void
+    public function testEditCommentNonAuthorizedUser(): void
     {
         // given
         $expectedStatusCode = 403;
-        $user1 = $this->createUser('user1@example.com', [User::ROLE_USER], false);
-        $user2 = $this->createUser('user2@example.com', [User::ROLE_USER], false);
+        $user1 = $this->createUser('user1@example.com', [User::ROLE_USER]);
+        $user2 = $this->createUser('user2@example.com', [User::ROLE_USER]);
         $this->logIn($user1);
 
-        $expectedPost = $this->createPost($user2, true);
+
+        $post = $this->createPost($user1);
+        $expectedComment = $this->createComment($user2, $post);
 
         // when
-        $this->httpClient->request('GET', '/'.$expectedPost->getId().'/edit');
+        $this->httpClient->request('GET', '/comment/'.$expectedComment->getId().'/edit');
         $resultStatusCode = $this->httpClient->getResponse()->getStatusCode();
 
         // then
@@ -198,19 +162,21 @@ class PostControllerTest extends WebTestCase
     }
 
     /**
-     * Test edit post for authorized user.
+     * Test edit comment for authorized user.
      */
-    public function testEditPostAuthorizedUser(): void
+    public function testEditCommentAuthorizedUser(): void
     {
         // given
         $expectedStatusCode = 200;
-        $user = $this->createUser('user@example.com', [User::ROLE_USER], false);
-        $this->logIn($user);
+        $user1 = $this->createUser('user1@example.com', [User::ROLE_USER]);
+        $user2 = $this->createUser('user2@example.com', [User::ROLE_USER]);
+        $this->logIn($user2);
 
-        $expectedPost = $this->createPost($user, true);
+        $post = $this->createPost($user1);
+        $expectedComment = $this->createComment($user2, $post);
 
         // when
-        $crawler = $this->httpClient->request('GET', '/'.$expectedPost->getId().'/edit');
+        $crawler = $this->httpClient->request('GET', '/comment/'.$expectedComment->getId().'/edit');
         $resultStatusCode = $this->httpClient->getResponse()->getStatusCode();
         $form = $crawler->selectButton('Zapisz')->form();
         $this->httpClient->submit($form);
@@ -222,20 +188,21 @@ class PostControllerTest extends WebTestCase
     }
 
     /**
-     * Test delete post for non authorized user.
+     * Test delete comment for non authorized user.
      */
-    public function testDeletePostNonAuthorizedUser(): void
+    public function testDeleteCommentNonAuthorizedUser(): void
     {
         // given
         $expectedStatusCode = 403;
-        $user1 = $this->createUser('user1@example.com', [User::ROLE_USER], false);
-        $user2 = $this->createUser('user2@example.com', [User::ROLE_USER], false);
+        $user1 = $this->createUser('user1@example.com', [User::ROLE_USER]);
+        $user2 = $this->createUser('user2@example.com', [User::ROLE_USER]);
         $this->logIn($user1);
 
-        $expectedPost = $this->createPost($user2, true);
+        $post = $this->createPost($user1);
+        $expectedComment = $this->createComment($user2, $post);
 
         // when
-        $this->httpClient->request('GET', '/'.$expectedPost->getId().'/delete');
+        $this->httpClient->request('GET', '/comment/'.$expectedComment->getId().'/delete');
         $resultStatusCode = $this->httpClient->getResponse()->getStatusCode();
 
         // then
@@ -243,19 +210,21 @@ class PostControllerTest extends WebTestCase
     }
 
     /**
-     * Test delete post for authorized user.
+     * Test delete comment for authorized user.
      */
-    public function testDeletePostAuthorizedUser(): void
+    public function testDeleteCommentAuthorizedUser(): void
     {
         // given
         $expectedStatusCode = 200;
-        $user = $this->createUser('user@example.com', [User::ROLE_USER], false);
-        $this->logIn($user);
+        $user1 = $this->createUser('user1@example.com', [User::ROLE_USER]);
+        $user2 = $this->createUser('user2@example.com', [User::ROLE_USER]);
+        $this->logIn($user2);
 
-        $expectedPost = $this->createPost($user, true);
+        $post = $this->createPost($user1);
+        $expectedComment = $this->createComment($user2, $post);
 
         // when
-        $crawler = $this->httpClient->request('GET', '/'.$expectedPost->getId().'/delete');
+        $crawler = $this->httpClient->request('GET', '/comment/'.$expectedComment->getId().'/delete');
         $resultStatusCode = $this->httpClient->getResponse()->getStatusCode();
         $form = $crawler->selectButton('Usuń')->form();
         $this->httpClient->submit($form);
@@ -291,11 +260,10 @@ class PostControllerTest extends WebTestCase
      *
      * @param string $email   User email
      * @param array  $roles   User roles
-     * @param bool   $blocked User blocked
      *
      * @return User User entity
      */
-    private function createUser(string $email, array $roles, bool $blocked): User
+    private function createUser(string $email, array $roles): User
     {
         $passwordEncoder = self::$container->get('security.password_encoder');
         $user = new User();
@@ -307,7 +275,6 @@ class PostControllerTest extends WebTestCase
                 'p@55w0rd'
             )
         );
-        $user->setBlocked($blocked);
 
         $userRepository = self::$container->get(UserRepository::class);
         $userRepository->save($user);
@@ -318,12 +285,11 @@ class PostControllerTest extends WebTestCase
     /**
      * Create post.
      *
-     * @param User $user      User entity
-     * @param bool $published Post published
+     * @param User $user User entity
      *
      * @return Post Post entity
      */
-    private function createPost(User $user, bool $published): Post
+    private function createPost(User $user): Post
     {
         $category = new Category();
         $category->setName('Test Category');
@@ -335,11 +301,33 @@ class PostControllerTest extends WebTestCase
         $post->setContent('Test Post Content');
         $post->setCategory($category);
         $post->setAuthor($user);
-        $post->setPublished($published);
+        $post->setPublished(true);
 
         $postRepository = self::$container->get(PostRepository::class);
         $postRepository->save($post);
 
         return $post;
+    }
+
+    /**
+     * Create comment.
+     *
+     * @param User $user User entity
+     * @param Post $post Post published
+     *
+     * @return Comment Comment entity
+     */
+    private function createComment(User $user, Post $post): Comment
+    {
+        $comment = new Comment();
+        $comment->setTitle('Test Comment');
+        $comment->setContent('Test Comment Content');
+        $comment->setPost($post);
+        $comment->setAuthor($user);
+
+        $commentRepository = self::$container->get(CommentRepository::class);
+        $commentRepository->save($comment);
+
+        return $comment;
     }
 }

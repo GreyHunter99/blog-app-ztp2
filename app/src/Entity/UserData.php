@@ -43,7 +43,7 @@ class UserData
      *
      * @Assert\Type(type="string")
      * @Assert\Length(
-     *     min="3",
+     *     allowEmptyString=true,
      *     max="64",
      * )
      */
@@ -58,7 +58,7 @@ class UserData
      *
      * @Assert\Type(type="string")
      * @Assert\Length(
-     *     min="3",
+     *     allowEmptyString=true,
      *     max="500",
      * )
      */

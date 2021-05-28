@@ -45,23 +45,6 @@ class PhotoService
     }
 
     /**
-     * Create paginated list.
-     *
-     * @param int  $page Page number
-     * @param Post $post Post entity
-     *
-     * @return PaginationInterface Paginated list
-     */
-    public function createPaginatedList(int $page, Post $post): PaginationInterface
-    {
-        return $this->paginator->paginate(
-            $this->photoRepository->queryPostPhotos($post),
-            $page,
-            PhotoRepository::PAGINATOR_ITEMS_PER_PAGE
-        );
-    }
-
-    /**
      * Save photo.
      *
      * @param Photo $photo Photo entity
@@ -85,5 +68,22 @@ class PhotoService
     public function delete(Photo $photo): void
     {
         $this->photoRepository->delete($photo);
+    }
+
+    /**
+     * Create paginated list.
+     *
+     * @param int  $page Page number
+     * @param Post $post Post entity
+     *
+     * @return PaginationInterface Paginated list
+     */
+    public function createPaginatedList(int $page, Post $post): PaginationInterface
+    {
+        return $this->paginator->paginate(
+            $this->photoRepository->queryPostPhotos($post),
+            $page,
+            PhotoRepository::PAGINATOR_ITEMS_PER_PAGE
+        );
     }
 }

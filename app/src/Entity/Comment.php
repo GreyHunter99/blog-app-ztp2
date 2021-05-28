@@ -73,6 +73,7 @@ class Comment
      * @Assert\Type(type="string")
      * @Assert\NotBlank
      * @Assert\Length(
+     *     allowEmptyString=false,
      *     min="3",
      *     max="64",
      * )
@@ -89,6 +90,7 @@ class Comment
      * @Assert\Type(type="string")
      * @Assert\NotBlank
      * @Assert\Length(
+     *     allowEmptyString=false,
      *     min="3",
      *     max="500",
      * )
@@ -107,6 +109,7 @@ class Comment
      *
      * @Assert\Type(type="string")
      * @Assert\Length(
+     *     allowEmptyString=false,
      *     min="3",
      *     max="64",
      * )

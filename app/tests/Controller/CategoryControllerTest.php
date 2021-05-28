@@ -61,7 +61,7 @@ class CategoryControllerTest extends WebTestCase
         $expectedStatusCode = 200;
 
         $expectedCategory = new Category();
-        $expectedCategory->setName('Test category');
+        $expectedCategory->setName('Test Category');
         $categoryRepository = self::$container->get(CategoryRepository::class);
         $categoryRepository->save($expectedCategory);
 
@@ -125,7 +125,7 @@ class CategoryControllerTest extends WebTestCase
         $this->logIn($user);
 
         $expectedCategory = new Category();
-        $expectedCategory->setName('Test category');
+        $expectedCategory->setName('Test Category');
         $categoryRepository = self::$container->get(CategoryRepository::class);
         $categoryRepository->save($expectedCategory);
 
@@ -148,7 +148,7 @@ class CategoryControllerTest extends WebTestCase
         $this->logIn($adminUser);
 
         $expectedCategory = new Category();
-        $expectedCategory->setName('Test category');
+        $expectedCategory->setName('Test Category');
         $categoryRepository = self::$container->get(CategoryRepository::class);
         $categoryRepository->save($expectedCategory);
 
@@ -175,7 +175,7 @@ class CategoryControllerTest extends WebTestCase
         $this->logIn($user);
 
         $expectedCategory = new Category();
-        $expectedCategory->setName('Test category');
+        $expectedCategory->setName('Test Category');
         $categoryRepository = self::$container->get(CategoryRepository::class);
         $categoryRepository->save($expectedCategory);
 
@@ -198,7 +198,7 @@ class CategoryControllerTest extends WebTestCase
         $this->logIn($adminUser);
 
         $expectedCategory = new Category();
-        $expectedCategory->setName('Test category');
+        $expectedCategory->setName('Test Category');
         $categoryRepository = self::$container->get(CategoryRepository::class);
         $categoryRepository->save($expectedCategory);
 
@@ -224,7 +224,7 @@ class CategoryControllerTest extends WebTestCase
         $this->logIn($adminUser);
 
         $expectedCategory = new Category();
-        $expectedCategory->setName('Test category');
+        $expectedCategory->setName('Test Category');
         $categoryRepository = self::$container->get(CategoryRepository::class);
         $categoryRepository->save($expectedCategory);
 

@@ -73,6 +73,7 @@ class Post
      * @Assert\Type(type="string")
      * @Assert\NotBlank
      * @Assert\Length(
+     *     allowEmptyString=false,
      *     min="3",
      *     max="64",
      * )
@@ -89,6 +90,7 @@ class Post
      * @Assert\Type(type="string")
      * @Assert\NotBlank
      * @Assert\Length(
+     *     allowEmptyString=false,
      *     min="3",
      *     max="1000",
      * )
@@ -118,6 +120,7 @@ class Post
      *
      * @Assert\Type(type="string")
      * @Assert\Length(
+     *     allowEmptyString=false,
      *     min="3",
      *     max="64",
      * )

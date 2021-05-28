@@ -41,7 +41,7 @@ class Tag
      *
      * @ORM\Column(type="datetime")
      *
-     * @Assert\DateTime
+     * @Assert\Type(type="\DateTimeInterface")
      *
      * @Gedmo\Timestampable(on="create")
      */
@@ -73,6 +73,7 @@ class Tag
      * @Assert\Type(type="string")
      * @Assert\NotBlank
      * @Assert\Length(
+     *     allowEmptyString=false,
      *     min="3",
      *     max="32",
      * )
@@ -91,6 +92,7 @@ class Tag
      *
      * @Assert\Type(type="string")
      * @Assert\Length(
+     *     allowEmptyString=false,
      *     min="3",
      *     max="32",
      * )

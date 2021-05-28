@@ -77,12 +77,12 @@ class PostServiceTest extends KernelTestCase
 
         // when
         $this->postService->save($expectedPost);
-        $expectedPost = $this->postRepository->findOneById(
+        $resultPost = $this->postRepository->findOneById(
             $expectedPost->getId()
         );
 
         // then
-        $this->assertEquals($expectedPost, $expectedPost);
+        $this->assertEquals($expectedPost, $resultPost);
     }
 
     /**
