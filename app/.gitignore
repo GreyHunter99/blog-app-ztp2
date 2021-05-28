@@ -1,4 +1,6 @@
 .env
+/.phpdoc/
+/bin/phpdoc/
 
 ###> symfony/framework-bundle ###
 /.env.local

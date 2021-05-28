@@ -4,3 +4,8 @@
 .phpunit.result.cache
 /.idea/
 /data/
+/.docker
+build-env.ps1
+build-env.sh
+docker-compose.yml
+readme.md
