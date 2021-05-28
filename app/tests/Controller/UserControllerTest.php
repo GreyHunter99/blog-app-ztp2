@@ -39,7 +39,7 @@ class UserControllerTest extends WebTestCase
     public function testIndexRouteNonAuthorizedUser(): void
     {
         // given
-        $expectedStatusCode = 403;
+        $expectedStatusCode = 302;
         $user = $this->createUser('user@example.com', [User::ROLE_USER], false);
         $this->logIn($user);
 
@@ -130,7 +130,7 @@ class UserControllerTest extends WebTestCase
     public function testChangePasswordNonAuthorizedUser(): void
     {
         // given
-        $expectedStatusCode = 403;
+        $expectedStatusCode = 302;
         $user1 = $this->createUser('user1@example.com', [User::ROLE_USER], false);
         $user2 = $this->createUser('user2@example.com', [User::ROLE_USER], false);
         $this->logIn($user1);
@@ -173,7 +173,7 @@ class UserControllerTest extends WebTestCase
     public function testChangeDataNonAuthorizedUser(): void
     {
         // given
-        $expectedStatusCode = 403;
+        $expectedStatusCode = 302;
         $user1 = $this->createUser('user1@example.com', [User::ROLE_USER], false);
         $user2 = $this->createUser('user2@example.com', [User::ROLE_USER], false);
         $this->logIn($user1);
@@ -214,7 +214,7 @@ class UserControllerTest extends WebTestCase
     public function testGrantAdminNonAuthorizedUser(): void
     {
         // given
-        $expectedStatusCode = 403;
+        $expectedStatusCode = 302;
         $expectedUser = $this->createUser('user@example.com', [User::ROLE_USER], false);
         $this->logIn($expectedUser);
 
@@ -298,7 +298,7 @@ class UserControllerTest extends WebTestCase
     public function testBlockUserNonAuthorizedUser(): void
     {
         // given
-        $expectedStatusCode = 403;
+        $expectedStatusCode = 302;
         $expectedUser = $this->createUser('user@example.com', [User::ROLE_USER], false);
         $this->logIn($expectedUser);
 

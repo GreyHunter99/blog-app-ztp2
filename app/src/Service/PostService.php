@@ -76,27 +76,28 @@ class PostService
     {
         $filters = $this->prepareFilters($filters);
 
-        if($mode == 'main_admin') {
+        if ('main_admin' === $mode) {
             return $this->paginator->paginate(
                 $this->postRepository->queryAll($filters),
                 $page,
                 PostRepository::PAGINATOR_ITEMS_PER_PAGE
             );
         }
-        if($mode == 'main') {
+        if ('main' === $mode) {
             return $this->paginator->paginate(
                 $this->postRepository->queryPublished($filters),
                 $page,
                 PostRepository::PAGINATOR_ITEMS_PER_PAGE
             );
         }
-        if($mode == 'profile_author') {
+        if ('profile_author' === $mode) {
             return $this->paginator->paginate(
                 $this->postRepository->queryByAuthor($user, $filters),
                 $page,
                 PostRepository::PAGINATOR_ITEMS_PER_PAGE
             );
         }
+
         return $this->paginator->paginate(
             $this->postRepository->queryPublishedByAuthor($user, $filters),
             $page,
@@ -156,7 +157,7 @@ class PostService
             }
         }
 
-        if (isset($filters['search'])){
+        if (isset($filters['search'])) {
             $resultFilters['search'] = $filters['search'];
         }
 

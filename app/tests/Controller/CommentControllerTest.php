@@ -144,11 +144,10 @@ class CommentControllerTest extends WebTestCase
     public function testEditCommentNonAuthorizedUser(): void
     {
         // given
-        $expectedStatusCode = 403;
+        $expectedStatusCode = 302;
         $user1 = $this->createUser('user1@example.com', [User::ROLE_USER]);
         $user2 = $this->createUser('user2@example.com', [User::ROLE_USER]);
         $this->logIn($user1);
-
 
         $post = $this->createPost($user1);
         $expectedComment = $this->createComment($user2, $post);
@@ -193,7 +192,7 @@ class CommentControllerTest extends WebTestCase
     public function testDeleteCommentNonAuthorizedUser(): void
     {
         // given
-        $expectedStatusCode = 403;
+        $expectedStatusCode = 302;
         $user1 = $this->createUser('user1@example.com', [User::ROLE_USER]);
         $user2 = $this->createUser('user2@example.com', [User::ROLE_USER]);
         $this->logIn($user1);
@@ -258,8 +257,8 @@ class CommentControllerTest extends WebTestCase
     /**
      * Create user.
      *
-     * @param string $email   User email
-     * @param array  $roles   User roles
+     * @param string $email User email
+     * @param array  $roles User roles
      *
      * @return User User entity
      */

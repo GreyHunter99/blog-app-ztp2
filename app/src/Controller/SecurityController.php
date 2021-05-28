@@ -16,16 +16,16 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 class SecurityController extends AbstractController
 {
     /**
-     * Login form action
+     * Login form action.
      *
      * @param AuthenticationUtils $authenticationUtils
-     *
-     * @return Response
      *
      * @Route(
      *     "/login",
      *     name="app_login"
      * )
+     *
+     * @return Response
      */
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
@@ -42,13 +42,13 @@ class SecurityController extends AbstractController
             'security/login.html.twig',
             [
                 'last_username' => $lastUsername,
-                'error' => $error
+                'error' => $error,
             ]
         );
     }
 
     /**
-     * Logout action
+     * Logout action.
      *
      * @Route(
      *     "/logout",
@@ -61,18 +61,19 @@ class SecurityController extends AbstractController
     }
 
     /**
-     * Logout success action
-     *
-     * @return Response
+     * Logout success action.
      *
      * @Route(
      *     "/logout_success",
      *     name="app_logout_success"
      * )
+     *
+     * @return Response
      */
     public function logoutSuccess(): Response
     {
         $this->addFlash('success', 'message_logout_successfully');
+
         return $this->redirectToRoute('post_index');
     }
 }

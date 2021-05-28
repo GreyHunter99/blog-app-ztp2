@@ -8,8 +8,8 @@ namespace App\Controller;
 use App\Entity\Photo;
 use App\Entity\Post;
 use App\Form\PhotoType;
-use App\Service\PhotoService;
 use App\Service\FileUploader;
+use App\Service\PhotoService;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -91,7 +91,7 @@ class PhotoController extends AbstractController
             'photo/index.html.twig',
             [
                 'pagination' => $pagination,
-                'post' => $post
+                'post' => $post,
             ]
         );
     }
@@ -168,7 +168,7 @@ class PhotoController extends AbstractController
             'photo/create.html.twig',
             [
                 'form' => $form->createView(),
-                'post' => $post
+                'post' => $post,
             ]
         );
     }

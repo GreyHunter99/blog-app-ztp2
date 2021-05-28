@@ -23,7 +23,7 @@ class LoginFormAuthenticatorService
     /**
      * LoginFormAuthenticatorService constructor.
      *
-     * @param UserRepository     $userRepository User repository
+     * @param UserRepository $userRepository User repository
      */
     public function __construct(UserRepository $userRepository)
     {

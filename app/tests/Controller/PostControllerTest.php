@@ -182,7 +182,7 @@ class PostControllerTest extends WebTestCase
     public function testEditPostNonAuthorizedUser(): void
     {
         // given
-        $expectedStatusCode = 403;
+        $expectedStatusCode = 302;
         $user1 = $this->createUser('user1@example.com', [User::ROLE_USER], false);
         $user2 = $this->createUser('user2@example.com', [User::ROLE_USER], false);
         $this->logIn($user1);
@@ -227,7 +227,7 @@ class PostControllerTest extends WebTestCase
     public function testDeletePostNonAuthorizedUser(): void
     {
         // given
-        $expectedStatusCode = 403;
+        $expectedStatusCode = 302;
         $user1 = $this->createUser('user1@example.com', [User::ROLE_USER], false);
         $user2 = $this->createUser('user2@example.com', [User::ROLE_USER], false);
         $this->logIn($user1);

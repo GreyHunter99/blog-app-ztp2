@@ -104,7 +104,7 @@ class Category
     /**
      * Posts.
      *
-     * @var ArrayCollection|Post[] $posts Posts
+     * @var ArrayCollection|Post[] Posts
      *
      * @ORM\OneToMany(
      *     targetEntity="App\Entity\Post",

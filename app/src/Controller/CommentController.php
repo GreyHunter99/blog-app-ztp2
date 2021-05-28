@@ -65,7 +65,7 @@ class CommentController extends AbstractController
     public function index(Request $request, ?User $user): Response
     {
         if ($user) {
-            if ($this->getUser() == $user or $this->isGranted('ROLE_ADMIN')) {
+            if ($this->getUser() === $user or $this->isGranted('ROLE_ADMIN')) {
                 $page = $request->query->getInt('page', 1);
                 $pagination = $this->commentService->createPaginatedList($page, null, $user);
 
@@ -73,7 +73,7 @@ class CommentController extends AbstractController
                     'comment/index.html.twig',
                     [
                         'pagination' => $pagination,
-                        'user' => $user->getEmail()
+                        'user' => $user->getEmail(),
                     ]
                 );
             }
@@ -87,6 +87,7 @@ class CommentController extends AbstractController
                 ['pagination' => $pagination]
             );
         }
+
         return $this->redirectToRoute('post_index');
     }
 
@@ -131,7 +132,7 @@ class CommentController extends AbstractController
             'comment/create.html.twig',
             [
                 'form' => $form->createView(),
-                'post' => $post
+                'post' => $post,
             ]
         );
     }

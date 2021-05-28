@@ -51,7 +51,7 @@ class UserServiceTest extends KernelTestCase
     public function testSave(): void
     {
         // given
-        $expectedUser = $this->createUser('user@example.com' ,[User::ROLE_USER]);
+        $expectedUser = $this->createUser('user@example.com', [User::ROLE_USER]);
 
         // when
         $this->userService->save($expectedUser);
@@ -94,7 +94,7 @@ class UserServiceTest extends KernelTestCase
 
         $counter = 0;
         while ($counter < $dataSetSize) {
-            $user = $this->createUser('testUser'.$counter.'@example.com' ,[User::ROLE_USER]);
+            $user = $this->createUser('testUser'.$counter.'@example.com', [User::ROLE_USER]);
             $this->userRepository->save($user);
 
             ++$counter;
@@ -121,7 +121,7 @@ class UserServiceTest extends KernelTestCase
 
         $counter = 0;
         while ($counter < $dataSetSize) {
-            $user = $this->createUser('user'.$counter.'@example.com' ,[User::ROLE_USER]);
+            $user = $this->createUser('user'.$counter.'@example.com', [User::ROLE_USER]);
             $this->userRepository->save($user);
 
             ++$counter;
@@ -129,12 +129,11 @@ class UserServiceTest extends KernelTestCase
 
         $counter = 0;
         while ($counter < $dataSetSize) {
-            $user = $this->createUser('admin'.$counter.'@example.com' ,[User::ROLE_USER, User::ROLE_ADMIN]);
+            $user = $this->createUser('admin'.$counter.'@example.com', [User::ROLE_USER, User::ROLE_ADMIN]);
             $this->userRepository->save($user);
 
             ++$counter;
         }
-
 
         // when
         $result = $this->userService->numberOfAdmins();

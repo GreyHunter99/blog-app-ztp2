@@ -77,7 +77,7 @@ class TagControllerTest extends WebTestCase
     public function testEditTagNonAuthorizedUser(): void
     {
         // given
-        $expectedStatusCode = 403;
+        $expectedStatusCode = 302;
         $user = $this->createUser([User::ROLE_USER]);
         $this->logIn($user);
 
@@ -127,7 +127,7 @@ class TagControllerTest extends WebTestCase
     public function testDeleteTagNonAuthorizedUser(): void
     {
         // given
-        $expectedStatusCode = 403;
+        $expectedStatusCode = 302;
         $user = $this->createUser([User::ROLE_USER]);
         $this->logIn($user);
 

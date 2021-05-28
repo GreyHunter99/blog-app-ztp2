@@ -9,7 +9,6 @@ use App\Entity\User;
 use App\Entity\UserData;
 use App\Form\ChangePasswordType;
 use App\Form\UserDataType;
-use App\Service\CommentService;
 use App\Service\PostService;
 use App\Service\UserDataService;
 use App\Service\UserService;
@@ -53,26 +52,17 @@ class UserController extends AbstractController
     private $postService;
 
     /**
-     * Comment service.
-     *
-     * @var CommentService
-     */
-    private $commentService;
-
-    /**
      * UserController constructor.
      *
      * @param UserService     $userService     User service
      * @param UserDataService $userDataService User data service
      * @param PostService     $postService     Post service
-     * @param CommentService  $commentService  Comment service
      */
-    public function __construct(UserService $userService, UserDataService $userDataService, PostService $postService, CommentService $commentService)
+    public function __construct(UserService $userService, UserDataService $userDataService, PostService $postService)
     {
         $this->userService = $userService;
         $this->userDataService = $userDataService;
         $this->postService = $postService;
-        $this->commentService = $commentService;
     }
 
     /**
@@ -106,7 +96,7 @@ class UserController extends AbstractController
     /**
      * Show action.
      *
-     * @param User $user User entity
+     * @param User    $user    User entity
      * @param Request $request HTTP request
      *
      * @return Response HTTP response
@@ -121,7 +111,7 @@ class UserController extends AbstractController
     public function show(User $user, Request $request): Response
     {
         if ($user->getBlocked()) {
-            if(!$this->isGranted('ROLE_ADMIN')){
+            if (!$this->isGranted('ROLE_ADMIN')) {
                 return $this->redirectToRoute('post_index');
             }
         }
@@ -138,7 +128,7 @@ class UserController extends AbstractController
         }
 
         $mode = 'profile';
-        if($this->isGranted('MANAGE', $user)){
+        if ($this->isGranted('MANAGE', $user)) {
             $mode = 'profile_author';
         }
 
@@ -154,7 +144,7 @@ class UserController extends AbstractController
             [
                 'user' => $user,
                 'pagination' => $pagination,
-                'form' => $form->createView()
+                'form' => $form->createView(),
             ]
         );
     }
@@ -282,7 +272,7 @@ class UserController extends AbstractController
     {
         $roles = $user->getRoles();
 
-        if (isset($roles[1]) && $this->userService->numberOfAdmins() == 1) {
+        if (isset($roles[1]) && 1 === $this->userService->numberOfAdmins()) {
             $this->addFlash('danger', 'message_last_admin');
 
             return $this->redirectToRoute('user_show', ['id' => $user->getId()]);
@@ -312,15 +302,15 @@ class UserController extends AbstractController
                     'user' => $user,
                 ]
             );
-        } else {
-            return $this->render(
-                'user/grantAdmin.html.twig',
-                [
-                    'form' => $form->createView(),
-                    'user' => $user,
-                ]
-            );
         }
+
+        return $this->render(
+            'user/grantAdmin.html.twig',
+            [
+                'form' => $form->createView(),
+                'user' => $user,
+            ]
+        );
     }
 
     /**
@@ -349,7 +339,7 @@ class UserController extends AbstractController
     {
         $roles = $user->getRoles();
 
-        if (isset($roles[1]) && $this->userService->numberOfAdmins() == 1) {
+        if (isset($roles[1]) && 1 === $this->userService->numberOfAdmins()) {
             $this->addFlash('danger', 'message_last_admin');
 
             return $this->redirectToRoute('user_show', ['id' => $user->getId()]);
@@ -379,15 +369,14 @@ class UserController extends AbstractController
                     'user' => $user,
                 ]
             );
-        } else {
-            return $this->render(
-                'user/block.html.twig',
-                [
-                    'form' => $form->createView(),
-                    'user' => $user,
-                ]
-            );
         }
-    }
 
+        return $this->render(
+            'user/block.html.twig',
+            [
+                'form' => $form->createView(),
+                'user' => $user,
+            ]
+        );
+    }
 }

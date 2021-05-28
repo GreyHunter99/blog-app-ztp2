@@ -81,7 +81,7 @@ class Post
     private $title;
 
     /**
-     * Content
+     * Content.
      *
      * @var string
      *
@@ -100,7 +100,7 @@ class Post
     /**
      * Published.
      *
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(type="boolean", nullable=true)
      *
@@ -162,7 +162,7 @@ class Post
     /**
      * Comments.
      *
-     * @var ArrayCollection|Comment[] $comments Comments
+     * @var ArrayCollection|Comment[] Comments
      *
      * @ORM\OneToMany(
      *     targetEntity="App\Entity\Comment",
@@ -185,7 +185,7 @@ class Post
     /**
      * Photo.
      *
-     * @var ArrayCollection|Photo[] $photos Photos
+     * @var ArrayCollection|Photo[] Photos
      *
      * @ORM\OneToMany(
      *     targetEntity="App\Entity\Photo",
@@ -439,7 +439,7 @@ class Post
     /**
      * Getter for Author.
      *
-     * @return User User
+     * @return User|null User
      */
     public function getAuthor(): ?User
     {
@@ -451,7 +451,7 @@ class Post
      *
      * @param User $author User
      */
-    public function setAuthor(?User $author): void
+    public function setAuthor(User $author): void
     {
         $this->author = $author;
     }

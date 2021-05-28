@@ -32,7 +32,8 @@ class ChangePasswordType extends AbstractType
     {
         $builder->add(
             'password',
-            RepeatedType::class, [
+            RepeatedType::class,
+            [
                 'type' => PasswordType::class,
                 'invalid_message' => 'Oba pola hasła muszą się zgadzać.',
                 'required' => true,

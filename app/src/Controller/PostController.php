@@ -79,7 +79,7 @@ class PostController extends AbstractController
         }
 
         $mode = 'main';
-        if($this->isGranted('ROLE_ADMIN')){
+        if ($this->isGranted('ROLE_ADMIN')) {
             $mode = 'main_admin';
         }
 
@@ -94,7 +94,7 @@ class PostController extends AbstractController
             'post/index.html.twig',
             [
                 'pagination' => $pagination,
-                'form' => $form->createView()
+                'form' => $form->createView(),
             ]
         );
     }
@@ -117,13 +117,13 @@ class PostController extends AbstractController
     public function show(Post $post, Request $request): Response
     {
         if ($post->getAuthor()->getBlocked()) {
-            if(!$this->isGranted('ROLE_ADMIN')){
+            if (!$this->isGranted('ROLE_ADMIN')) {
                 return $this->redirectToRoute('post_index');
             }
         }
 
         if (!$post->getPublished()) {
-            if(!$this->isGranted('MANAGE', $post)){
+            if (!$this->isGranted('MANAGE', $post)) {
                 return $this->redirectToRoute('post_index');
             }
         }

@@ -6,8 +6,6 @@
 namespace App\Entity;
 
 use DateTimeInterface;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -81,7 +79,7 @@ class Comment
     private $title;
 
     /**
-     * Content
+     * Content.
      *
      * @var string
      *
@@ -121,7 +119,7 @@ class Comment
     /**
      * Post.
      *
-     * @var \App\Entity\Post    Post
+     * @var Post Post
      *
      * @ORM\ManyToOne(
      *     targetEntity="App\Entity\Post",
@@ -135,7 +133,7 @@ class Comment
     /**
      * Author.
      *
-     * @var \App\Entity\User
+     * @var User
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\User")
      * @ORM\JoinColumn(nullable=false)
@@ -275,7 +273,7 @@ class Comment
     /**
      * Getter for Author.
      *
-     * @return User User
+     * @return User|null User
      */
     public function getAuthor(): ?User
     {
@@ -287,7 +285,7 @@ class Comment
      *
      * @param User $author User
      */
-    public function setAuthor(?User $author): void
+    public function setAuthor(User $author): void
     {
         $this->author = $author;
     }

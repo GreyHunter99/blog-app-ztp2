@@ -79,7 +79,7 @@ class CategoryControllerTest extends WebTestCase
     public function testCreateCategoryNonAuthorizedUser(): void
     {
         // given
-        $expectedStatusCode = 403;
+        $expectedStatusCode = 302;
         $user = $this->createUser([User::ROLE_USER]);
         $this->logIn($user);
 
@@ -120,7 +120,7 @@ class CategoryControllerTest extends WebTestCase
     public function testEditCategoryNonAuthorizedUser(): void
     {
         // given
-        $expectedStatusCode = 403;
+        $expectedStatusCode = 302;
         $user = $this->createUser([User::ROLE_USER]);
         $this->logIn($user);
 
@@ -170,7 +170,7 @@ class CategoryControllerTest extends WebTestCase
     public function testDeleteCategoryNonAuthorizedUser(): void
     {
         // given
-        $expectedStatusCode = 403;
+        $expectedStatusCode = 302;
         $user = $this->createUser([User::ROLE_USER]);
         $this->logIn($user);
 

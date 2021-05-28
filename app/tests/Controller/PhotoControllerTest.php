@@ -46,11 +46,11 @@ class PhotoControllerTest extends WebTestCase
     public function testIndexRouteNonAuthorizedUser(): void
     {
         // given
-        $expectedStatusCode = 403;
-        $user1 = $this->createUser('user1@example.com', [User::ROLE_USER]);
+        $expectedStatusCode = 302;
+        $user1 = $this->createUser('user1@example.com');
         $post = $this->createPost($user1);
 
-        $user2 = $this->createUser('user2@example.com', [User::ROLE_USER]);
+        $user2 = $this->createUser('user2@example.com');
         $this->logIn($user2);
 
         // when
@@ -68,7 +68,7 @@ class PhotoControllerTest extends WebTestCase
     {
         // given
         $expectedStatusCode = 200;
-        $user = $this->createUser('user@example.com', [User::ROLE_USER]);
+        $user = $this->createUser('user@example.com');
         $this->logIn($user);
         $post = $this->createPost($user);
 
@@ -86,12 +86,12 @@ class PhotoControllerTest extends WebTestCase
     public function testShowPhotoNonAuthorizedUser(): void
     {
         // given
-        $expectedStatusCode = 403;
-        $user1 = $this->createUser('user1@example.com', [User::ROLE_USER]);
+        $expectedStatusCode = 302;
+        $user1 = $this->createUser('user1@example.com');
         $post = $this->createPost($user1);
         $photo = $this->createPhoto($post);
 
-        $user2 = $this->createUser('user2@example.com', [User::ROLE_USER]);
+        $user2 = $this->createUser('user2@example.com');
         $this->logIn($user2);
 
         // when
@@ -109,7 +109,7 @@ class PhotoControllerTest extends WebTestCase
     {
         // given
         $expectedStatusCode = 200;
-        $user = $this->createUser('user@example.com', [User::ROLE_USER]);
+        $user = $this->createUser('user@example.com');
         $this->logIn($user);
         $post = $this->createPost($user);
         $photo = $this->createPhoto($post);
@@ -128,11 +128,11 @@ class PhotoControllerTest extends WebTestCase
     public function testCreatePhotoNonAuthorizedUser(): void
     {
         // given
-        $expectedStatusCode = 403;
-        $user1 = $this->createUser('user1@example.com', [User::ROLE_USER]);
+        $expectedStatusCode = 302;
+        $user1 = $this->createUser('user1@example.com');
         $post = $this->createPost($user1);
 
-        $user2 = $this->createUser('user2@example.com', [User::ROLE_USER]);
+        $user2 = $this->createUser('user2@example.com');
         $this->logIn($user2);
 
         // when
@@ -150,7 +150,7 @@ class PhotoControllerTest extends WebTestCase
     {
         // given
         $expectedStatusCode = 200;
-        $user = $this->createUser('user@example.com', [User::ROLE_USER]);
+        $user = $this->createUser('user@example.com');
         $this->logIn($user);
         $post = $this->createPost($user);
 
@@ -180,12 +180,12 @@ class PhotoControllerTest extends WebTestCase
     public function testEditPhotoNonAuthorizedUser(): void
     {
         // given
-        $expectedStatusCode = 403;
-        $user1 = $this->createUser('user1@example.com', [User::ROLE_USER]);
+        $expectedStatusCode = 302;
+        $user1 = $this->createUser('user1@example.com');
         $post = $this->createPost($user1);
         $photo = $this->createPhoto($post);
 
-        $user2 = $this->createUser('user2@example.com', [User::ROLE_USER]);
+        $user2 = $this->createUser('user2@example.com');
         $this->logIn($user2);
 
         // when
@@ -203,7 +203,7 @@ class PhotoControllerTest extends WebTestCase
     {
         // given
         $expectedStatusCode = 200;
-        $user = $this->createUser('user@example.com', [User::ROLE_USER]);
+        $user = $this->createUser('user@example.com');
         $this->logIn($user);
         $post = $this->createPost($user);
         $photo = $this->createPhoto($post);
@@ -234,12 +234,12 @@ class PhotoControllerTest extends WebTestCase
     public function testDeletePhotoNonAuthorizedUser(): void
     {
         // given
-        $expectedStatusCode = 403;
-        $user1 = $this->createUser('user1@example.com', [User::ROLE_USER]);
+        $expectedStatusCode = 302;
+        $user1 = $this->createUser('user1@example.com');
         $post = $this->createPost($user1);
         $photo = $this->createPhoto($post);
 
-        $user2 = $this->createUser('user2@example.com', [User::ROLE_USER]);
+        $user2 = $this->createUser('user2@example.com');
         $this->logIn($user2);
 
         // when
@@ -257,7 +257,7 @@ class PhotoControllerTest extends WebTestCase
     {
         // given
         $expectedStatusCode = 200;
-        $user = $this->createUser('user@example.com', [User::ROLE_USER]);
+        $user = $this->createUser('user@example.com');
         $this->logIn($user);
         $post = $this->createPost($user);
         $photo = $this->createPhoto($post);
@@ -297,17 +297,16 @@ class PhotoControllerTest extends WebTestCase
     /**
      * Create user.
      *
-     * @param string $email   User email
-     * @param array  $roles   User roles
+     * @param string $email User email
      *
      * @return User User entity
      */
-    private function createUser(string $email, array $roles): User
+    private function createUser(string $email): User
     {
         $passwordEncoder = self::$container->get('security.password_encoder');
         $user = new User();
         $user->setEmail($email);
-        $user->setRoles($roles);
+        $user->setRoles([User::ROLE_USER]);
         $user->setPassword(
             $passwordEncoder->encodePassword(
                 $user,
