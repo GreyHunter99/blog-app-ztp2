@@ -1,12 +1,12 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    {{ 'title_post_list'|trans }}
+    Blog o ścieżkach dźwiękowych - {{ 'title_post_list'|trans }}
 {% endblock %}
 
 {% block body %}
-    <h4>{{ 'title_search'|trans }}</h4>
-    {{ form(form) }}
+    <h1>Blog o ścieżkach dźwiękowych</h1>
+    <h4>{{ 'title_search'|trans }}: {{ form(form) }}</h4>
     <h1>{{ 'title_post_list'|trans }}</h1>
     <a class="btn btn-primary" role="button" href=" {{ url('post_create') }}"
        title="{{ 'title_post_create'|trans }}">{{ 'title_post_create'|trans }}</a>

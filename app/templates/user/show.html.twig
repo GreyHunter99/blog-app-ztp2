@@ -75,8 +75,7 @@
                    title="{{ 'title_block_user'|trans }}">{{ 'title_block_user'|trans }}</a>
             {% endif %}
         {% endif %}
-        <h4>{{ 'title_search'|trans }}</h4>
-        {{ form(form) }}
+        <h4>{{ 'title_search'|trans }}: {{ form(form) }}</h4>
         <h2>{{ 'title_post_list'|trans }}</h2>
         {% if pagination is defined and pagination.items|length %}
             <div class="navigation text-center">
