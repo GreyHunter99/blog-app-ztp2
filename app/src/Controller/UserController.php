@@ -116,7 +116,7 @@ class UserController extends AbstractController
             }
         }
 
-        $form = $this->createForm(SearchType::class);
+        $form = $this->createForm(SearchType::class, '', ['method' => 'GET']);
         $form->handleRequest($request);
 
         $filters = [];

@@ -67,7 +67,7 @@ class PostController extends AbstractController
      */
     public function index(Request $request): Response
     {
-        $form = $this->createForm(SearchType::class);
+        $form = $this->createForm(SearchType::class, '', ['method' => 'GET']);
         $form->handleRequest($request);
 
         $filters = [];
